@@ -39,7 +39,7 @@ Trend-based forecasting is included to identify potential warning signals over t
 
 # architectural diagram
 
-![architectural diagram](https://github.com/user-attachments/assets/4af54b03-fa99-4fc9-8e05-b2d776f33196)
+![architectural diagram](https://github.com/user-attachments/assets/6b7746d2-9760-484a-a974-684864bf6b01)
 
 
 # Dependencies
