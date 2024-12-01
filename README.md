@@ -1,6 +1,7 @@
 # Mobile-based-Health-Monitoring-System-with-Machine-learning-Insights-for-Cardiovascular-Patients
 
-Overview of the Project
+* Overview of the Project
+
 This mobile-based health monitoring system is designed to support cardiovascular patients in maintaining their health metrics, predicting risks, and adopting a healthier lifestyle. The application provides personalized insights, predictive analytics, and real-time feedback using advanced machine learning algorithms and an intuitive interface that enables patients to manage their conditions effectively.
 
 # Key Features:
