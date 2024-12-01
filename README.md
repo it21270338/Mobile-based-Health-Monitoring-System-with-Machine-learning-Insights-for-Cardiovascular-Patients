@@ -46,25 +46,25 @@ The following tools, libraries, and frameworks are used to build the system:
 Software and Tools:
 
 * Backend:
-1.Python, TensorFlow, or PyTorch for machine learning model implementation.
-2.MySQL or PostgreSQL for database management.
-3.Flask or Django for API development and backend integration.
+Python, TensorFlow, or PyTorch for machine learning model implementation.
+MySQL or PostgreSQL for database management.
+Flask or Django for API development and backend integration.
 
 * Frontend:
-1.React Native for a responsive and interactive mobile app interface.
-2.Three.js or similar libraries for implementing the 3D pain localization feature.
+React Native for a responsive and interactive mobile app interface.
+Three.js or similar libraries for implementing the 3D pain localization feature.
 
 * Security:
-1.OAuth 2.0 for user authentication and secure login.
-2.AES encryption to ensure all health data remains private and secure.
+OAuth 2.0 for user authentication and secure login.
+AES encryption to ensure all health data remains private and secure.
 
 * Visualization and Reporting:
-1.Chart.js or D3.js for interactive charts, graphs, and trend visualizations.
+Chart.js or D3.js for interactive charts, graphs, and trend visualizations.
 
 * Libraries and Frameworks:
-1.Scikit-learn: For building initial machine learning prototypes.
-2.Matplotlib/Seaborn: For exploratory data analysis and visualizing health data trends.
-3.Lottie: For creating animated interface components to enhance user experience.
+Scikit-learn: For building initial machine learning prototypes.
+Matplotlib/Seaborn: For exploratory data analysis and visualizing health data trends.
+Lottie: For creating animated interface components to enhance user experience.
 
 
 
