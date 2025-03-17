@@ -3,7 +3,7 @@ from fastapi import HTTPException
 
 # Firebase configuration
 firebaseConfig = {
-  "apiKey": "AIzaSyCt__rHohtEZoUc_G9K70Fva-gv15JyQx4",
+  
   "authDomain": "healthy-heart-c6bbd.firebaseapp.com",
   "databaseURL": "https://healthy-heart-c6bbd-default-rtdb.asia-southeast1.firebasedatabase.app",
   "projectId": "healthy-heart-c6bbd",

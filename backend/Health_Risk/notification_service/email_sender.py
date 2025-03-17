@@ -4,8 +4,7 @@ from email.message import EmailMessage
 
 SMTP_HOST = "smtp.gmail.com"
 SMTP_PORT = 587
-SMTP_USERNAME = "shehan.krishan.dev@gmail.com"
-SMTP_PASSWORD = "obek qfqv wual htjo"
+
 
 async def send_email(to_email: str, subject: str, content: str):
     msg = EmailMessage()
