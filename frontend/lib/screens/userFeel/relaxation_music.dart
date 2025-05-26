@@ -140,7 +140,7 @@ class _RelaxationMusicState extends State<RelaxationMusic> {
     if (emotion.contains('fear') || emotion.contains('scared')) {
       return 'fear';
     }
-    if (emotion.contains('sadness') || emotion.contains('sad')) {
+    if (emotion.contains('sadness') || emotion.contains('sadness')) {
       return 'sadness';
     }
     return emotion;
