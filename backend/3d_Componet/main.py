@@ -193,7 +193,7 @@ def encode_with_fallback(value, known_classes):
     else:
         return -1  # Assign -1 for unseen labels
 
-@app.post("/predict_heart_risk")
+@app.post("/predict_heart_risk")        #endpoint
 def predict_heart_risk(user_id: str, data: RiskPredictionRequest):
     """Predict risk level based on input data"""
     input_df = pd.DataFrame([data.dict()])
@@ -211,7 +211,7 @@ def predict_heart_risk(user_id: str, data: RiskPredictionRequest):
     input_df = input_df.reindex(columns=expected_features, fill_value=0)  # Fill missing columns with 0
 
     # Predict risk
-    prediction = health_model.predict(input_df)
+    prediction = health_model.predict(input_df)     #get prediction
     predicted_risk = health_label_encoder.inverse_transform(prediction)
     
     # Create pain record
