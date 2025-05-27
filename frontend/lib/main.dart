@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-
+import 'package:MediSafe/screens/authService/login.dart';
+import 'package:MediSafe/screens/authService/register.dart';
+import 'package:MediSafe/screens/dashboard/dashboard.dart';
+import 'package:MediSafe/screens/profile/profileScreen.dart';
+import 'package:MediSafe/screens/userFeel/feel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import 'screens/authService/login.dart';
-import 'screens/authService/register.dart';
-import 'screens/dashboard/dashboard.dart';
-import 'screens/profile/profileScreen.dart';
 
 void main() async {
   // Ensure Flutter is initialized
