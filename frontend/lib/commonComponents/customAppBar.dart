@@ -2,6 +2,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 
+
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../screens/dashboard/dashboard.dart';
@@ -103,7 +104,10 @@ class _CustomAppBarState extends State<CustomAppBar> {
       );
 
       // Navigate to login screen and remove all previous routes
-      Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
+      Navigator.of(context).pushNamedAndRemoveUntil(
+        '/login',
+            (route) => false,
+      );
     } catch (e) {
       // Handle any errors during logout
       ScaffoldMessenger.of(context).showSnackBar(
@@ -137,7 +141,9 @@ class _CustomAppBarState extends State<CustomAppBar> {
                 Navigator.of(context).pop(); // Close dialog
                 await _logout(context);
               },
-              style: TextButton.styleFrom(foregroundColor: Colors.red),
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.red,
+              ),
               child: const Text('Logout'),
             ),
           ],
@@ -151,54 +157,53 @@ class _CustomAppBarState extends State<CustomAppBar> {
     return AppBar(
       backgroundColor: Theme.of(context).primaryColor,
       elevation: 0,
-      leading:
-          widget.showHomeButton
-              ? IconButton(
-                icon: const Icon(Icons.home, color: Colors.white),
-                onPressed: () {
-                  // Navigate to home/dashboard, clearing the stack
-                  Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(builder: (context) => const Dashboard()),
-                    (route) => false,
-                  );
-                },
-              )
-              : null,
+      leading: widget.showHomeButton ? IconButton(
+        icon: const Icon(Icons.home, color: Colors.white),
+        onPressed: () {
+          // Navigate to home/dashboard, clearing the stack
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(
+              builder: (context) => const Dashboard(),
+            ),
+                (route) => false,
+          );
+        },
+      ) : null,
       centerTitle: true,
       title: Text(
         widget.title,
         style: const TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 20,
-          color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+            color: Colors.white
         ),
       ),
       actions: [
         // Profile Avatar
         isLoading
             ? const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: CircularProgressIndicator(
-                color: Colors.white,
-                strokeWidth: 2,
-              ),
-            )
+          padding: EdgeInsets.all(8.0),
+          child: CircularProgressIndicator(
+            color: Colors.white,
+            strokeWidth: 2,
+          ),
+        )
             : Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: GestureDetector(
-                onTap: () => _navigateToProfile(context),
-                child: CircleAvatar(
-                  backgroundColor: Colors.white,
-                  child: Text(
-                    userInitials,
-                    style: TextStyle(
-                      color: Theme.of(context).primaryColor,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: GestureDetector(
+            onTap: () => _navigateToProfile(context),
+            child: CircleAvatar(
+              backgroundColor: Colors.white,
+              child: Text(
+                userInitials,
+                style: TextStyle(
+                  color: Theme.of(context).primaryColor,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ),
+          ),
+        ),
 
         // Logout Button
         IconButton(
