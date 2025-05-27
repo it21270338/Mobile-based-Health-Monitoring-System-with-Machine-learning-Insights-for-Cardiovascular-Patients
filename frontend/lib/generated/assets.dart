@@ -2,8 +2,8 @@
 class Assets {
   Assets._();
 
-  static const String HumanEcorche = 'assets/3d/human_ecorche.glb';
-  static const String MaleBasemesh = 'assets/3d/male_basemesh.glb';
+  static const String 3dHumanEcorche = 'assets/3d/human_ecorche.glb';
+  static const String 3dMaleBasemesh = 'assets/3d/male_basemesh.glb';
   static const String angerMeditationRelaxationTrack287420 = 'assets/songs/anger/meditation-relaxation-track-287420.mp3';
   static const String angerOceanWaves250310 = 'assets/music/anger/ocean-waves-250310.mp3';
   static const String angerRainyWoodsAmbience31004 = 'assets/music/anger/rainy-woods-ambience-31004.mp3';
@@ -11,6 +11,7 @@ class Assets {
   static const String fearEchoingCreek2288823 = 'assets/music/fear/echoing-creek-2-288823.mp3';
   static const String fearEpicStoryOfCourage231643 = 'assets/songs/fear/epic-story-of-courage-231643.mp3';
   static const String fearTinklingKeys56693 = 'assets/music/fear/tinkling-keys-56693.mp3';
+  static const String iconProjectIcon = 'assets/icon/projectIcon.jpg';
   static const String imagesBody = 'assets/images/body.svg';
   static const String imagesBody2 = 'assets/images/body2.svg';
   static const String sadnessBirdsInTheMorning24614 = 'assets/music/sadness/birds-in-the-morning-24614.mp3';
