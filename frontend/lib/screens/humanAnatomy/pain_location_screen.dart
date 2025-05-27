@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:body_part_selector/body_part_selector.dart';
-import 'package:healthy_heart/commonComponents/healthAlert.dart';
-import 'package:healthy_heart/screens/humanAnatomy/pain_history_screen.dart';
-import 'package:healthy_heart/services/apiDio.dart';
-import 'package:healthy_heart/utils/shared_prefs.dart';
+import 'package:MediSafe/commonComponents/healthAlert.dart';
+import 'package:MediSafe/screens/humanAnatomy/pain_history_screen.dart';
+import 'package:MediSafe/services/apiDio.dart';
+import 'package:MediSafe/utils/shared_prefs.dart';
 
 class PainDetails {
   final String bodyPart;
@@ -68,6 +68,33 @@ class _PainLocationScreenState extends State<PainLocationScreen> {
     vestibular: false,
   );
 
+  BodyParts _DefaultBodyParts = const BodyParts(
+    head: false,
+    neck: false,
+    leftShoulder: false,
+    leftUpperArm: false,
+    leftElbow: false,
+    leftLowerArm: false,
+    leftHand: false,
+    rightShoulder: false,
+    rightUpperArm: false,
+    rightElbow: false,
+    rightLowerArm: false,
+    rightHand: false,
+    upperBody: false,
+    lowerBody: false,
+    leftUpperLeg: false,
+    leftKnee: false,
+    leftLowerLeg: false,
+    leftFoot: false,
+    rightUpperLeg: false,
+    rightKnee: false,
+    rightLowerLeg: false,
+    rightFoot: false,
+    abdomen: false,
+    vestibular: false,
+  );
+
   String? selectedBodyPart;
   String? selectedSymptom;
   String? selectedActivity;
@@ -80,27 +107,20 @@ class _PainLocationScreenState extends State<PainLocationScreen> {
 
   final List<String> accompanyingSymptoms = [
     'none',
-    'shortness_of_breath',
+    'shortness of breath',
     'sweating',
     'nausea',
     'dizziness',
-    'multiple',
   ];
 
   final List<String> activityTypes = [
-    'resting',
-    'walking',
-    'running',
-    'weightlifting',
-    'swimming',
-    'cycling',
-    'yoga',
-    'hiit',
-    'climbing',
+    'working',
     'sleeping',
-    'desk_work',
-    'housework',
-    'gardening',
+    'running',
+    'resting',
+    'climbing stairs',
+    'walking',
+    'exercising',
   ];
 
   Future<void> _loadHeartRate() async {
@@ -363,7 +383,7 @@ class _PainLocationScreenState extends State<PainLocationScreen> {
                                 Navigator.pushReplacement(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => PainHistoryScreen(),
+                                    builder: (context) => PainHistoryScreen(riskLevel: riskLevel,),
                                   ),
                                 );
                               } catch (e) {
@@ -399,10 +419,16 @@ class _PainLocationScreenState extends State<PainLocationScreen> {
           },
         );
       },
-    );
+    ).whenComplete(() {
+      // This is called when the BottomSheet is dismissed
+      setState(() {
+        _bodyParts = _DefaultBodyParts;
+      });
+    });
   }
 
   void _handleBodyPartSelection(BodyParts parts) {
+    print("body part: $parts");
     setState(() => _bodyParts = parts);
 
     // Reset selectedBodyPart

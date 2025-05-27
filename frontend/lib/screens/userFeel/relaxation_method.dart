@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:healthy_heart/commonComponents/customAppBar.dart';
-import 'package:healthy_heart/commonComponents/healthAlert.dart';
-import 'package:healthy_heart/screens/userFeel/relaxation.dart';
-import 'package:healthy_heart/screens/userFeel/relaxation_music.dart';
-import 'package:healthy_heart/screens/userFeel/relaxation_songs.dart';
-import 'package:healthy_heart/utils/shared_prefs.dart';
+import 'package:MediSafe/commonComponents/customAppBar.dart';
+import 'package:MediSafe/commonComponents/healthAlert.dart';
+import 'package:MediSafe/screens/userFeel/relaxation.dart';
+import 'package:MediSafe/screens/userFeel/relaxation_music.dart';
+import 'package:MediSafe/screens/userFeel/relaxation_songs.dart';
+import 'package:MediSafe/utils/shared_prefs.dart';
 
 class RelaxationMethod extends StatefulWidget {
   final String emotion;
 
-  const RelaxationMethod({Key? key, required this.emotion}) : super(key: key);
+  const RelaxationMethod({
+    Key? key,
+    required this.emotion,
+  }) : super(key: key);
 
   @override
   State<RelaxationMethod> createState() => _RelaxationMethodState();
@@ -34,11 +37,11 @@ class _RelaxationMethodState extends State<RelaxationMethod> {
     super.initState();
     _ShowNotify();
   }
-
   Future<void> _ShowNotify() async {
     final id = await SharedPrefs.getUserId();
-    showEmotionAlert(context, id!, widget.emotion);
+    showEmotionAlert(context,id!,widget.emotion);
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -96,7 +99,10 @@ class _RelaxationMethodState extends State<RelaxationMethod> {
                         const Text(
                           "Let's help you feel better with these relaxation methods",
                           textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: 14, color: Colors.grey),
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey,
+                          ),
                         ),
                       ],
                     ),
@@ -105,7 +111,10 @@ class _RelaxationMethodState extends State<RelaxationMethod> {
                 const SizedBox(height: 30),
                 const Text(
                   "Choose your preferred method:",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 const SizedBox(height: 20),
                 Expanded(
@@ -117,12 +126,10 @@ class _RelaxationMethodState extends State<RelaxationMethod> {
                         "Listen to soothing melodies",
                         Icons.music_note,
                         Colors.purple,
-                        () => Navigator.push(
+                            () => Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder:
-                                (context) =>
-                                    RelaxationSongs(emotion: widget.emotion),
+                            builder: (context) => RelaxationSongs(emotion: widget.emotion),
                           ),
                         ),
                       ),
@@ -133,26 +140,10 @@ class _RelaxationMethodState extends State<RelaxationMethod> {
                         "Immerse in peaceful tunes",
                         Icons.queue_music,
                         Colors.blue,
-                        () => Navigator.push(
+                            () => Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder:
-                                (context) =>
-                                    RelaxationMusic(emotion: widget.emotion),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      _buildRelaxationOption(
-                        context,
-                        "Mini Games",
-                        "Take your mind off with fun activities",
-                        Icons.games,
-                        Colors.green,
-                        () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const Relaxation(),
+                            builder: (context) => RelaxationMusic(emotion: widget.emotion),
                           ),
                         ),
                       ),
@@ -164,7 +155,10 @@ class _RelaxationMethodState extends State<RelaxationMethod> {
                   child: Text(
                     "Take your time, you're on the path to feeling better",
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 12, color: Colors.grey),
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey,
+                    ),
                   ),
                 ),
               ],
@@ -176,16 +170,18 @@ class _RelaxationMethodState extends State<RelaxationMethod> {
   }
 
   Widget _buildRelaxationOption(
-    BuildContext context,
-    String title,
-    String subtitle,
-    IconData icon,
-    Color color,
-    VoidCallback onTap,
-  ) {
+      BuildContext context,
+      String title,
+      String subtitle,
+      IconData icon,
+      Color color,
+      VoidCallback onTap,
+      ) {
     return Card(
       elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(16),
@@ -199,7 +195,11 @@ class _RelaxationMethodState extends State<RelaxationMethod> {
                   color: color.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(icon, size: 32, color: color),
+                child: Icon(
+                  icon,
+                  size: 32,
+                  color: color,
+                ),
               ),
               const SizedBox(width: 16),
               Expanded(
@@ -216,12 +216,19 @@ class _RelaxationMethodState extends State<RelaxationMethod> {
                     const SizedBox(height: 4),
                     Text(
                       subtitle,
-                      style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey[600],
+                      ),
                     ),
                   ],
                 ),
               ),
-              Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey[400]),
+              Icon(
+                Icons.arrow_forward_ios,
+                size: 16,
+                color: Colors.grey[400],
+              ),
             ],
           ),
         ),

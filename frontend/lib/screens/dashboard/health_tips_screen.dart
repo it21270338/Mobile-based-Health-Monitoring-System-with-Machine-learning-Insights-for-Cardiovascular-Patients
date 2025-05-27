@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:healthy_heart/commonComponents/customAppBar.dart';
+import 'package:MediSafe/commonComponents/customAppBar.dart';
 
 class HealthTipsScreen extends StatelessWidget {
   const HealthTipsScreen({super.key});
@@ -88,7 +88,9 @@ class HealthTipsScreen extends StatelessWidget {
   }) {
     return Card(
       elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
       child: ExpansionTile(
         leading: Container(
           padding: const EdgeInsets.all(8),
@@ -96,11 +98,17 @@ class HealthTipsScreen extends StatelessWidget {
             color: color.withOpacity(0.1),
             borderRadius: BorderRadius.circular(8),
           ),
-          child: Icon(icon, color: color),
+          child: Icon(
+            icon,
+            color: color,
+          ),
         ),
         title: Text(
           title,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+          ),
         ),
         children: [
           Padding(
@@ -121,10 +129,20 @@ class HealthTipsScreen extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(Icons.check_circle, size: 20, color: Colors.green),
+          const Icon(
+            Icons.check_circle,
+            size: 20,
+            color: Colors.green,
+          ),
           const SizedBox(width: 8),
           Expanded(
-            child: Text(tip, style: const TextStyle(fontSize: 14, height: 1.4)),
+            child: Text(
+              tip,
+              style: const TextStyle(
+                fontSize: 14,
+                height: 1.4,
+              ),
+            ),
           ),
         ],
       ),

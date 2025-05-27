@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:healthy_heart/commonComponents/customAppBar.dart';
-import 'package:healthy_heart/services/apiDio.dart';
-import 'package:healthy_heart/utils/shared_prefs.dart';
+import 'package:MediSafe/commonComponents/customAppBar.dart';
+import 'package:MediSafe/services/apiDio.dart';
+import 'package:MediSafe/utils/shared_prefs.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 class HealthScoreTimelineScreen extends StatefulWidget {
   const HealthScoreTimelineScreen({super.key});
 
   @override
-  State<HealthScoreTimelineScreen> createState() =>
-      _HealthScoreTimelineScreenState();
+  State<HealthScoreTimelineScreen> createState() => _HealthScoreTimelineScreenState();
 }
 
 class _HealthScoreTimelineScreenState extends State<HealthScoreTimelineScreen> {
@@ -47,13 +46,15 @@ class _HealthScoreTimelineScreenState extends State<HealthScoreTimelineScreen> {
         // Format the timestamp based on selected period
         String formattedDate = _formatDate(record['timestamp']);
 
-        newHealthScores.add(
-          HealthData(formattedDate, record['health_score'].toDouble()),
-        );
+        newHealthScores.add(HealthData(
+          formattedDate,
+          record['health_score'].toDouble(),
+        ));
 
-        newRiskScores.add(
-          HealthData(formattedDate, record['risk_probability'].toDouble()),
-        );
+        newRiskScores.add(HealthData(
+          formattedDate,
+          record['risk_probability'].toDouble(),
+        ));
       }
 
       setState(() {
@@ -85,18 +86,8 @@ class _HealthScoreTimelineScreenState extends State<HealthScoreTimelineScreen> {
 
   String _getMonthName(int month) {
     const monthNames = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
+      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
     ];
     return monthNames[month - 1];
   }
@@ -154,90 +145,94 @@ class _HealthScoreTimelineScreenState extends State<HealthScoreTimelineScreen> {
     ],
   };
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const CustomAppBar(title: 'Health Score Timeline'),
-      body:
-          isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Card(
+              elevation: 4,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Card(
-                      elevation: 4,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            _buildFilterChip('Daily'),
-                            _buildFilterChip('Weekly'),
-                            _buildFilterChip('Monthly'),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-
-                    if (healthScores.isEmpty)
-                      const Expanded(
-                        child: Center(
-                          child: Text(
-                            'No health records found.\nComplete a health assessment to see your trends.',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 16, color: Colors.grey),
-                          ),
-                        ),
-                      )
-                    else ...[
-                      Expanded(
-                        child: Card(
-                          elevation: 4,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: _buildGraph(
-                              'Health Score Trend',
-                              healthScores,
-                              // healthScoreData[selectedPeriod]!,
-                              Colors.blue,
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      const SizedBox(height: 16),
-
-                      Expanded(
-                        child: Card(
-                          elevation: 4,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: _buildGraph(
-                              'Heart Failure Risk Trend',
-                              riskScores,
-                              // riskScoreData[selectedPeriod]!,
-                              Colors.red,
-                              isRisk: true,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
+                    _buildFilterChip('Daily'),
+                    _buildFilterChip('Weekly'),
+                    _buildFilterChip('Monthly'),
                   ],
                 ),
               ),
+            ),
+            const SizedBox(height: 24),
+
+            if (healthScores.isEmpty)
+              const Expanded(
+                child: Center(
+                  child: Text(
+                    'No health records found.\nComplete a health assessment to see your trends.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ),
+              )
+            else
+              ...[
+                Expanded(
+                  child: Card(
+                    elevation: 4,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: _buildGraph(
+                        'Health Score Trend',
+                        healthScores,
+                        // healthScoreData[selectedPeriod]!,
+                        Colors.blue,
+                      ),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
+                Expanded(
+                  child: Card(
+                    elevation: 4,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: _buildGraph(
+                        'Heart Failure Risk Trend',
+                        riskScores,
+                        // riskScoreData[selectedPeriod]!,
+                        Colors.red,
+                        isRisk: true,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+          ],
+        ),
+      ),
     );
   }
 
@@ -249,7 +244,7 @@ class _HealthScoreTimelineScreenState extends State<HealthScoreTimelineScreen> {
         setState(() {
           selectedPeriod = period;
         });
-        _fetchHealthData(); // Fetch new data when period changes
+        _fetchHealthData();  // Fetch new data when period changes
       },
       selectedColor: Theme.of(context).primaryColor.withOpacity(0.2),
       checkmarkColor: Theme.of(context).primaryColor,
@@ -257,12 +252,7 @@ class _HealthScoreTimelineScreenState extends State<HealthScoreTimelineScreen> {
     );
   }
 
-  Widget _buildGraph(
-    String title,
-    List<HealthData> data,
-    Color color, {
-    bool isRisk = false,
-  }) {
+  Widget _buildGraph(String title, List<HealthData> data, Color color, {bool isRisk = false}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -271,11 +261,17 @@ class _HealthScoreTimelineScreenState extends State<HealthScoreTimelineScreen> {
           children: [
             Text(
               title,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             Text(
               selectedPeriod,
-              style: TextStyle(color: Colors.grey[600], fontSize: 14),
+              style: TextStyle(
+                color: Colors.grey[600],
+                fontSize: 14,
+              ),
             ),
           ],
         ),
@@ -285,8 +281,8 @@ class _HealthScoreTimelineScreenState extends State<HealthScoreTimelineScreen> {
             plotAreaBorderWidth: 0,
             legend: const Legend(isVisible: false),
             tooltipBehavior: TooltipBehavior(
-              enable: true,
-              format: 'point.x : point.y${isRisk ? '%' : ''}',
+                enable: true,
+                format: 'point.x : point.y${isRisk ? '%' : ''}'
             ),
             primaryXAxis: CategoryAxis(
               majorGridLines: const MajorGridLines(width: 0),

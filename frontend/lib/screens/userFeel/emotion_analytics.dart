@@ -29,10 +29,16 @@ class EmotionFrequency {
   final String emotion;
   final int count;
 
-  EmotionFrequency({required this.emotion, required this.count});
+  EmotionFrequency({
+    required this.emotion,
+    required this.count,
+  });
 
   factory EmotionFrequency.fromJson(Map<String, dynamic> json) {
-    return EmotionFrequency(emotion: json['emotion'], count: json['count']);
+    return EmotionFrequency(
+      emotion: json['emotion'],
+      count: json['count'],
+    );
   }
 }
 
@@ -51,14 +57,12 @@ class EmotionAnalytics {
 
   factory EmotionAnalytics.fromJson(Map<String, dynamic> json) {
     return EmotionAnalytics(
-      distribution:
-          (json['distribution'] as List)
-              .map((e) => EmotionDistribution.fromJson(e))
-              .toList(),
-      frequency:
-          (json['frequency'] as List)
-              .map((e) => EmotionFrequency.fromJson(e))
-              .toList(),
+      distribution: (json['distribution'] as List)
+          .map((e) => EmotionDistribution.fromJson(e))
+          .toList(),
+      frequency: (json['frequency'] as List)
+          .map((e) => EmotionFrequency.fromJson(e))
+          .toList(),
       totalRecords: json['total_records'],
       timeRange: json['time_range'],
     );
@@ -73,18 +77,19 @@ class EmotionAnalyticsService {
 
   Future<EmotionAnalytics> getEmotionAnalytics({
     required String userId,
-    String timeRange = 'week',
+    String timeRange = 'all',
     String? emotionFilter,
   }) async {
-    final queryParams = {'time_range': timeRange};
+    final queryParams = {
+      'time_range': timeRange,
+    };
 
     if (emotionFilter != null) {
       queryParams['emotion_filter'] = emotionFilter;
     }
 
-    final uri = Uri.parse(
-      '$baseUrl/users/$userId/emotions/analytics',
-    ).replace(queryParameters: queryParams);
+    final uri = Uri.parse('$baseUrl/users/$userId/emotions/analytics')
+        .replace(queryParameters: queryParams);
 
     final response = await http.get(uri);
 
@@ -117,7 +122,7 @@ class EmotionDashboardScreen extends StatefulWidget {
 class _EmotionDashboardScreenState extends State<EmotionDashboardScreen> {
   late EmotionAnalyticsService _analyticsService;
   late String _userId;
-  String _selectedTimeRange = 'week';
+  String _selectedTimeRange = 'all';
   EmotionAnalytics? _emotionData;
   bool _isLoading = true;
 
@@ -126,9 +131,7 @@ class _EmotionDashboardScreenState extends State<EmotionDashboardScreen> {
   @override
   void initState() {
     super.initState();
-    _analyticsService = EmotionAnalyticsService(
-      baseUrl: 'https://pleasing-pup-positive.ngrok-free.app',
-    );
+    _analyticsService = EmotionAnalyticsService(baseUrl: 'http://13.203.212.95:8000');
     _loadUserId().then((_) {
       _fetchEmotionData();
     });
@@ -139,9 +142,9 @@ class _EmotionDashboardScreenState extends State<EmotionDashboardScreen> {
     _userId = prefs.getString('user_id') ?? '';
     if (_userId.isEmpty) {
       // Handle case where user is not logged in
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('User not logged in')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('User not logged in')),
+      );
     }
   }
 
@@ -177,29 +180,36 @@ class _EmotionDashboardScreenState extends State<EmotionDashboardScreen> {
       appBar: AppBar(
         title: Text('Emotion Dashboard'),
         actions: [
-          IconButton(icon: Icon(Icons.refresh), onPressed: _fetchEmotionData),
+          IconButton(
+            icon: Icon(Icons.refresh),
+            onPressed: _fetchEmotionData,
+          ),
         ],
       ),
-      body:
-          _isLoading
-              ? Center(child: CircularProgressIndicator())
-              : _emotionData == null || _emotionData!.totalRecords == 0
-              ? Center(child: Text('No emotion data available'))
-              : SingleChildScrollView(
-                padding: EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildTimeRangeSelector(),
-                    SizedBox(height: 24),
-                    _buildSummaryCard(),
-                    SizedBox(height: 24),
-                    _buildPieChartSection(),
-                    SizedBox(height: 32),
-                    _buildBarChartSection(),
-                  ],
-                ),
-              ),
+      body: _isLoading
+          ? Center(child: CircularProgressIndicator())
+          : _emotionData == null || _emotionData!.totalRecords == 0
+          ? Center(child: Column(
+        children: [
+          Text('No emotion data available'),
+          _buildTimeRangeSelector(),
+        ],
+      ) )
+          : SingleChildScrollView(
+        padding: EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildTimeRangeSelector(),
+            SizedBox(height: 24),
+            _buildSummaryCard(),
+            SizedBox(height: 24),
+            _buildPieChartSection(),
+            SizedBox(height: 32),
+            _buildBarChartSection(),
+          ],
+        ),
+      ),
     );
   }
 
@@ -212,30 +222,32 @@ class _EmotionDashboardScreenState extends State<EmotionDashboardScreen> {
           children: [
             Text(
               'Time Range',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+              ),
             ),
             SizedBox(height: 8),
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
-                children:
-                    _timeRanges.map((range) {
-                      return Padding(
-                        padding: EdgeInsets.only(right: 8),
-                        child: ChoiceChip(
-                          label: Text(range.capitalize()),
-                          selected: _selectedTimeRange == range,
-                          onSelected: (selected) {
-                            if (selected) {
-                              setState(() {
-                                _selectedTimeRange = range;
-                              });
-                              _fetchEmotionData();
-                            }
-                          },
-                        ),
-                      );
-                    }).toList(),
+                children: _timeRanges.map((range) {
+                  return Padding(
+                    padding: EdgeInsets.only(right: 8),
+                    child: ChoiceChip(
+                      label: Text(range.capitalize()),
+                      selected: _selectedTimeRange == range,
+                      onSelected: (selected) {
+                        if (selected) {
+                          setState(() {
+                            _selectedTimeRange = range;
+                          });
+                          _fetchEmotionData();
+                        }
+                      },
+                    ),
+                  );
+                }).toList(),
               ),
             ),
           ],
@@ -253,7 +265,10 @@ class _EmotionDashboardScreenState extends State<EmotionDashboardScreen> {
           children: [
             Text(
               'Summary',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+              ),
             ),
             SizedBox(height: 12),
             Text(
@@ -278,7 +293,10 @@ class _EmotionDashboardScreenState extends State<EmotionDashboardScreen> {
       children: [
         Text(
           'Emotion Distribution',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+          ),
         ),
         SizedBox(height: 16),
         Card(
@@ -308,30 +326,25 @@ class _EmotionDashboardScreenState extends State<EmotionDashboardScreen> {
                     series: <CircularSeries<EmotionDistribution, String>>[
                       PieSeries<EmotionDistribution, String>(
                         dataSource: _emotionData!.distribution,
-                        xValueMapper:
-                            (EmotionDistribution data, _) =>
-                                data.emotion.capitalize(),
-                        yValueMapper:
-                            (EmotionDistribution data, _) => data.percentage,
-                        dataLabelMapper:
-                            (EmotionDistribution data, _) =>
-                                '${data.emotion.capitalize()}\n${data.percentage.toStringAsFixed(1)}%',
-                        pointColorMapper:
-                            (EmotionDistribution data, _) =>
-                                emotionColors[data.emotion] ?? Colors.grey,
+                        xValueMapper: (EmotionDistribution data, _) => data.emotion.capitalize(),
+                        yValueMapper: (EmotionDistribution data, _) => data.percentage,
+                        dataLabelMapper: (EmotionDistribution data, _) =>
+                        '${data.emotion.capitalize()} ${data.percentage.toStringAsFixed(1)}% ',
+                        pointColorMapper: (EmotionDistribution data, _) =>
+                        emotionColors[data.emotion] ?? Colors.grey,
                         dataLabelSettings: DataLabelSettings(
                           isVisible: true,
                           labelPosition: ChartDataLabelPosition.outside,
                           connectorLineSettings: ConnectorLineSettings(
                             type: ConnectorType.line,
-                            length: '15%',
+                            length: '5%',
                           ),
                           textStyle: TextStyle(
-                            fontSize: 12,
+                            fontSize: 10,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                        explode: true,
+                        explode: false,
                         explodeIndex: 0,
                         explodeOffset: '10%',
                       ),
@@ -352,7 +365,10 @@ class _EmotionDashboardScreenState extends State<EmotionDashboardScreen> {
       children: [
         Text(
           'Emotion Frequency',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+          ),
         ),
         SizedBox(height: 16),
         Card(
@@ -384,28 +400,49 @@ class _EmotionDashboardScreenState extends State<EmotionDashboardScreen> {
                   enable: true,
                   format: 'point.x: point.y',
                 ),
-                legend: Legend(isVisible: false),
-                series: <CartesianSeries<EmotionFrequency, String>>[
-                  ColumnSeries<EmotionFrequency, String>(
-                    dataSource: _emotionData!.frequency,
-                    xValueMapper:
-                        (EmotionFrequency data, _) => data.emotion.capitalize(),
-                    yValueMapper: (EmotionFrequency data, _) => data.count,
-                    pointColorMapper:
-                        (EmotionFrequency data, _) =>
-                            emotionColors[data.emotion] ?? Colors.grey,
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(6),
-                    ),
+                legend: Legend(
+                  isVisible: false,
+                ),
+                series: <CartesianSeries<EmotionDistribution, String>>[
+                  ColumnSeries<EmotionDistribution, String>(
+                    dataSource: _emotionData!.distribution,
+                    xValueMapper: (EmotionDistribution data, _) => data.emotion.capitalize(),
+                    yValueMapper: (EmotionDistribution data, _) => data.percentage,
+                    dataLabelMapper: (EmotionDistribution data, _) =>
+                    '${data.percentage.toStringAsFixed(1)}% ',
+                    pointColorMapper: (EmotionDistribution data, _) =>
+                    emotionColors[data.emotion] ?? Colors.grey,
                     dataLabelSettings: DataLabelSettings(
                       isVisible: true,
+                      labelPosition: ChartDataLabelPosition.outside,
+                      connectorLineSettings: ConnectorLineSettings(
+                        type: ConnectorType.line,
+                        length: '5%',
+                      ),
                       textStyle: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ),
                 ],
+                // series: <CartesianSeries<EmotionFrequency, String>>[
+                //   ColumnSeries<EmotionFrequency, String>(
+                //     dataSource: _emotionData!.frequency,
+                //     xValueMapper: (EmotionFrequency data, _) => data.emotion.capitalize(),
+                //     yValueMapper: (EmotionFrequency data, _) => data.count,
+                //     pointColorMapper: (EmotionFrequency data, _) =>
+                //     emotionColors[data.emotion] ?? Colors.grey,
+                //     borderRadius: BorderRadius.vertical(top: Radius.circular(6)),
+                //     dataLabelSettings: DataLabelSettings(
+                //       isVisible: true,
+                //       textStyle: TextStyle(
+                //         fontSize: 12,
+                //         fontWeight: FontWeight.bold,
+                //       ),
+                //     ),
+                //   ),
+                // ],
               ),
             ),
           ),

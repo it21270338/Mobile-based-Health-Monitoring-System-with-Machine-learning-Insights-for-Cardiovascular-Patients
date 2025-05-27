@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../services/apiDio.dart';
 
+
 class HealthAlertPopup extends StatelessWidget {
   final String alertTitle;
   final String alertMessage;
@@ -26,12 +27,10 @@ class HealthAlertPopup extends StatelessWidget {
       position: Tween<Offset>(
         begin: const Offset(0, -1),
         end: Offset.zero,
-      ).animate(
-        CurvedAnimation(
-          parent: ModalRoute.of(context)!.animation!,
-          curve: Curves.easeOut,
-        ),
-      ),
+      ).animate(CurvedAnimation(
+        parent: ModalRoute.of(context)!.animation!,
+        curve: Curves.easeOut,
+      )),
       child: Material(
         color: Colors.transparent,
         child: Container(
@@ -61,7 +60,11 @@ class HealthAlertPopup extends StatelessWidget {
                         color: iconColor.withOpacity(0.2),
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: Icon(Icons.favorite, color: iconColor, size: 24),
+                      child: Icon(
+                        Icons.favorite,
+                        color: iconColor,
+                        size: 24,
+                      ),
                     ),
                     const SizedBox(width: 16),
                     Expanded(
@@ -175,7 +178,7 @@ extension ColorExtension on Color {
 }
 
 // Show the alert from top of the screen
-void showHealthAlert(BuildContext context, String userId) {
+void showHealthAlert(BuildContext context,String userId) {
   showGeneralDialog(
     context: context,
     barrierDismissible: true,
@@ -188,15 +191,9 @@ void showHealthAlert(BuildContext context, String userId) {
           alignment: Alignment.topCenter,
           child: HealthAlertPopup(
             alertTitle: 'Heart Rate Risk Detected',
-            alertMessage:
-                'We detected an unusually high risk. Do you want to alert your emergency contact now?',
+            alertMessage: 'We detected an unusually high risk. Do you want to alert your emergency contact now?',
             onNotifyContact: () async {
-              await sendNotificationWithLoader(
-                context,
-                userId,
-                "heart_rate",
-                null,
-              );
+              await sendNotificationWithLoader(context, userId, "heart_rate",null);
               Navigator.of(context).pop();
             },
             onDismiss: () {
@@ -209,7 +206,7 @@ void showHealthAlert(BuildContext context, String userId) {
   );
 }
 
-void showEmotionAlert(BuildContext context, String userId, String emotion) {
+void showEmotionAlert(BuildContext context,String userId,String emotion) {
   showGeneralDialog(
     context: context,
     barrierDismissible: true,
@@ -222,16 +219,10 @@ void showEmotionAlert(BuildContext context, String userId, String emotion) {
           alignment: Alignment.topCenter,
           child: HealthAlertPopup(
             alertTitle: 'Emotional Support',
-            alertMessage:
-                "We noticed that you're feeling $emotion. Would you like to take a moment to relax or get some support?",
+            alertMessage: "We noticed that you're feeling $emotion. Would you like to take a moment to relax or get some support?",
             onNotifyContact: () async {
               // Add your emergency contact notification logic here
-              await sendNotificationWithLoader(
-                context,
-                userId,
-                "emotion",
-                emotion,
-              );
+              await sendNotificationWithLoader(context, userId, "emotion", emotion);
               Navigator.of(context).pop();
             },
             onDismiss: () {
@@ -244,12 +235,8 @@ void showEmotionAlert(BuildContext context, String userId, String emotion) {
   );
 }
 
-Future<void> sendNotificationWithLoader(
-  BuildContext context,
-  String userId,
-  String type,
-  String? emotion,
-) async {
+
+Future<void> sendNotificationWithLoader(BuildContext context, String userId, String type, String? emotion) async {
   final apiDio _apiDio = apiDio();
   // Show loader dialog
   showDialog(
@@ -275,14 +262,10 @@ Future<void> sendNotificationWithLoader(
   Navigator.of(context).pop();
 
   // Show success or failure message
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      content: Text(
-        success
-            ? "Emergency contact notified successfully!"
-            : "Failed to notify emergency contact.",
-      ),
-      backgroundColor: success ? Colors.green : Colors.red,
-    ),
-  );
+  // ScaffoldMessenger.of(context).showSnackBar(
+  //   SnackBar(
+  //     content: Text(success ? "Emergency contact notified successfully!" : "Failed to notify emergency contact."),
+  //     backgroundColor: success ? Colors.green : Colors.red,
+  //   ),
+  // );
 }

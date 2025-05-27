@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:healthy_heart/services/apiDio.dart';
-import 'package:healthy_heart/utils/shared_prefs.dart';
+import 'package:MediSafe/screens/dashboard/dashboard.dart';
+import 'package:MediSafe/services/apiDio.dart';
+import 'package:MediSafe/utils/shared_prefs.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:dio/dio.dart';
 import 'package:intl/intl.dart';
 
+import '../../commonComponents/healthAlert.dart';
+
 class PainHistoryScreen extends StatefulWidget {
+  final String riskLevel;
+
+  const PainHistoryScreen({Key? key,required this.riskLevel}) : super(key: key);
+
   @override
   _PainHistoryScreenState createState() => _PainHistoryScreenState();
 }
@@ -19,44 +26,46 @@ class _PainHistoryScreenState extends State<PainHistoryScreen> {
 
   final List<String> timeRanges = ['all', 'day', 'week', 'month', 'year'];
 
+  Future<void> _checkAndShowHealthAlert() async {
+    if (widget.riskLevel == "high") {
+      final id = await SharedPrefs.getUserId();
+      if (context.mounted) {
+        showHealthAlert(context, id!);
+      }
+    }
+  }
+
+
   @override
   void initState() {
     super.initState();
     fetchPainHistory();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkAndShowHealthAlert();
+    });
   }
 
-  Map<String, dynamic> processLocationFrequencies(
-    Map<String, dynamic> frequencies,
-  ) {
-    return frequencies.map(
-      (key, value) => MapEntry(key, (value as num).toInt()),
-    );
+
+  Map<String, dynamic> processLocationFrequencies(Map<String, dynamic> frequencies) {
+    return frequencies.map((key, value) =>
+        MapEntry(key, (value as num).toInt()));
   }
 
-  Map<String, dynamic> processSymptomCorrelations(
-    Map<String, dynamic> correlations,
-  ) {
+  Map<String, dynamic> processSymptomCorrelations(Map<String, dynamic> correlations) {
     final processed = <String, dynamic>{};
 
     // Process symptom heart rate correlations
     if (correlations['symptom_heart_rate'] != null) {
-      processed['symptom_heart_rate'] = (correlations['symptom_heart_rate']
-              as Map<String, dynamic>)
+      processed['symptom_heart_rate'] = (correlations['symptom_heart_rate'] as Map<String, dynamic>)
           .map((key, value) => MapEntry(key, (value as num).toDouble()));
     }
 
     // Process symptom risk distribution
     if (correlations['symptom_risk_distribution'] != null) {
-      final riskDist =
-          correlations['symptom_risk_distribution'] as Map<String, dynamic>;
-      processed['symptom_risk_distribution'] = riskDist.map(
-        (symptom, risks) => MapEntry(
-          symptom,
-          (risks as Map<String, dynamic>).map(
-            (risk, count) => MapEntry(risk, (count as num).toInt()),
-          ),
-        ),
-      );
+      final riskDist = correlations['symptom_risk_distribution'] as Map<String, dynamic>;
+      processed['symptom_risk_distribution'] = riskDist.map((symptom, risks) =>
+          MapEntry(symptom, (risks as Map<String, dynamic>).map((risk, count) =>
+              MapEntry(risk, (count as num).toInt()))));
     }
 
     // Process common symptom activities
@@ -75,14 +84,12 @@ class _PainHistoryScreenState extends State<PainHistoryScreen> {
       final response = await apiDio().getPainHistory(id!, selectedTimeRange);
       print(response);
       setState(() {
-        painHistory =
-            (response['pain_history'] as List)
-                .map((record) => PainRecord.fromJson(record))
-                .toList();
+        painHistory = (response['pain_history'] as List)
+            .map((record) => PainRecord.fromJson(record))
+            .toList();
         insights = List<String>.from(response['insights']);
         locationFrequencies = processLocationFrequencies(
-          response['location_frequencies'] as Map<String, dynamic>,
-        );
+            response['location_frequencies'] as Map<String, dynamic>);
         isLoading = false;
       });
     } catch (e) {
@@ -94,6 +101,7 @@ class _PainHistoryScreenState extends State<PainHistoryScreen> {
     }
   }
 
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -101,6 +109,15 @@ class _PainHistoryScreenState extends State<PainHistoryScreen> {
       child: Scaffold(
         appBar: AppBar(
           title: Text('Pain History & Trends'),
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => Dashboard()),
+              );
+            },
+          ),
           actions: [
             // Dropdown for time range selection
             // DropdownButton<String>(
@@ -129,16 +146,15 @@ class _PainHistoryScreenState extends State<PainHistoryScreen> {
             ],
           ),
         ),
-        body:
-            isLoading
-                ? Center(child: CircularProgressIndicator())
-                : TabBarView(
-                  children: [
-                    _buildTimelineTab(),
-                    _buildTrendsTab(),
-                    _buildInsightsTab(),
-                  ],
-                ),
+        body: isLoading
+            ? Center(child: CircularProgressIndicator())
+            : TabBarView(
+          children: [
+            _buildTimelineTab(),
+            _buildTrendsTab(),
+            _buildInsightsTab(),
+          ],
+        ),
       ),
     );
   }
@@ -195,7 +211,9 @@ class _PainHistoryScreenState extends State<PainHistoryScreen> {
           dateFormat: DateFormat.yMMMd(),
           intervalType: DateTimeIntervalType.auto,
         ),
-        primaryYAxis: NumericAxis(title: AxisTitle(text: 'Duration (minutes)')),
+        primaryYAxis: NumericAxis(
+          title: AxisTitle(text: 'Duration (minutes)'),
+        ),
         series: <CartesianSeries<PainRecord, DateTime>>[
           LineSeries<PainRecord, DateTime>(
             name: 'Pain Duration',
@@ -221,7 +239,9 @@ class _PainHistoryScreenState extends State<PainHistoryScreen> {
           dateFormat: DateFormat.yMMMd(),
           intervalType: DateTimeIntervalType.auto,
         ),
-        primaryYAxis: NumericAxis(title: AxisTitle(text: 'Heart Rate (bpm)')),
+        primaryYAxis: NumericAxis(
+          title: AxisTitle(text: 'Heart Rate (bpm)'),
+        ),
         series: <CartesianSeries<PainRecord, DateTime>>[
           LineSeries<PainRecord, DateTime>(
             name: 'Heart Rate',
@@ -237,10 +257,9 @@ class _PainHistoryScreenState extends State<PainHistoryScreen> {
   }
 
   Widget _buildLocationFrequencyChart() {
-    List<LocationFrequency> data =
-        locationFrequencies.entries
-            .map((e) => LocationFrequency(e.key, e.value))
-            .toList();
+    List<LocationFrequency> data = locationFrequencies.entries
+        .map((e) => LocationFrequency(e.key, e.value))
+        .toList();
 
     return Container(
       height: 300,
@@ -268,10 +287,9 @@ class _PainHistoryScreenState extends State<PainHistoryScreen> {
           (activityCount[record.activityType] ?? 0) + 1;
     }
 
-    List<ActivityFrequency> data =
-        activityCount.entries
-            .map((e) => ActivityFrequency(e.key, e.value))
-            .toList();
+    List<ActivityFrequency> data = activityCount.entries
+        .map((e) => ActivityFrequency(e.key, e.value))
+        .toList();
 
     return Container(
       height: 300,
@@ -281,7 +299,9 @@ class _PainHistoryScreenState extends State<PainHistoryScreen> {
         legend: Legend(isVisible: true),
         tooltipBehavior: TooltipBehavior(enable: true),
         primaryXAxis: CategoryAxis(),
-        primaryYAxis: NumericAxis(title: AxisTitle(text: 'Frequency')),
+        primaryYAxis: NumericAxis(
+          title: AxisTitle(text: 'Frequency'),
+        ),
         series: <CartesianSeries<ActivityFrequency, String>>[
           BarSeries<ActivityFrequency, String>(
             dataSource: data,
@@ -307,7 +327,9 @@ class _PainHistoryScreenState extends State<PainHistoryScreen> {
               children: [
                 Icon(Icons.lightbulb_outline, color: Colors.amber),
                 SizedBox(width: 16),
-                Expanded(child: Text(insights[index])),
+                Expanded(
+                  child: Text(insights[index]),
+                ),
               ],
             ),
           ),
@@ -317,13 +339,11 @@ class _PainHistoryScreenState extends State<PainHistoryScreen> {
   }
 
   Widget _getRiskBadge(String riskLevel) {
-    final color =
-        {
-          'low': Colors.green,
-          'medium': Colors.orange,
-          'high': Colors.red,
-        }[riskLevel.toLowerCase()] ??
-        Colors.grey;
+    final color = {
+      'low': Colors.green,
+      'medium': Colors.orange,
+      'high': Colors.red,
+    }[riskLevel.toLowerCase()] ?? Colors.grey;
 
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -362,8 +382,7 @@ class PainRecord {
     return PainRecord(
       timestamp: DateTime.parse(json['timestamp']),
       heartRate: json['heart_rate'].toDouble(), // Ensure it's double
-      painDurationMinutes:
-          json['pain_duration_minutes'].toDouble(), // Ensure it's double
+      painDurationMinutes: json['pain_duration_minutes'].toDouble(), // Ensure it's double
       activityType: json['activity_type'],
       painLocation: json['pain_location'],
       accompanyingSymptoms: json['accompanying_symptoms'],

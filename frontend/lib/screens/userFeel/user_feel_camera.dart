@@ -1,9 +1,13 @@
-import 'package:flutter/material.dart';
-import 'package:camera/camera.dart';
-import 'package:healthy_heart/screens/userFeel/relaxation_method.dart';
+import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:http/http.dart' as http;
+import 'package:path/path.dart' as p; // updated
+import 'package:http_parser/http_parser.dart';
+import 'package:MediSafe/screens/userFeel/relaxation_method.dart';
 
-import 'package:healthy_heart/services/apiDio.dart';
+import '../../utils/shared_prefs.dart';
 
 class UserFeelCamera extends StatefulWidget {
   const UserFeelCamera({super.key});
@@ -14,134 +18,131 @@ class UserFeelCamera extends StatefulWidget {
 
 class _UserFeelCameraState extends State<UserFeelCamera>
     with WidgetsBindingObserver {
-  CameraController? _controller;
-  bool _isCameraInitialized = false;
-  bool _isCapturing = false;
-  bool _showPreview = false;
-  File? _capturedImage;
-  final apiDio _apiDio = apiDio();
+  File? _selectedImage;
+  String _response = '';
+  bool _isLoading = false;
+  final ImagePicker _picker = ImagePicker();
 
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addObserver(this);
-    _initializeCamera();
-  }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    _controller?.dispose();
-    super.dispose();
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (_controller == null || !_controller!.value.isInitialized) return;
-
-    if (state == AppLifecycleState.inactive) {
-      _controller?.dispose();
-    } else if (state == AppLifecycleState.resumed) {
-      _initializeCamera();
-    }
-  }
-
-  Future<void> _initializeCamera() async {
-    final cameras = await availableCameras();
-    final frontCamera = cameras.firstWhere(
-      (camera) => camera.lensDirection == CameraLensDirection.front,
-      orElse: () => cameras.first,
-    );
-
-    _controller = CameraController(
-      frontCamera,
-      ResolutionPreset.high, // Use a higher resolution preset
-      enableAudio: false,
-    );
-
-    try {
-      await _controller!.initialize();
-      await _controller!.setFocusMode(FocusMode.auto); // Set focus mode
-      await _controller!.setFlashMode(FlashMode.auto); // Set flash mode
-
-      if (mounted) {
-        setState(() {
-          _isCameraInitialized = true;
-        });
-      }
-    } catch (e) {
-      print('Error initializing camera: $e');
-    }
-  }
-
-  Future<void> _captureImage() async {
-    if (!_isCameraInitialized || _isCapturing) return;
-
-    setState(() {
-      _isCapturing = true;
-    });
-
-    try {
-      // Add a delay to allow the camera to stabilize
-      await Future.delayed(const Duration(milliseconds: 500));
-
-      final XFile image = await _controller!.takePicture();
+  Future<void> _pickImage(ImageSource source) async {
+    final pickedFile = await _picker.pickImage(source: source);
+    if (pickedFile != null) {
       setState(() {
-        _capturedImage = File(image.path);
-        _showPreview = true;
-      });
-
-      // Debug the captured image
-      print('Image path: ${image.path}');
-      print('Image size: ${await image.length()} bytes');
-    } catch (e) {
-      print('Error capturing image: $e');
-    } finally {
-      setState(() {
-        _isCapturing = false;
+        _selectedImage = File(pickedFile.path);
+        _response = '';
       });
     }
   }
 
   bool needsRelaxation(String emotion) {
-    return ['angry', 'fear', 'sad'].contains(emotion.toLowerCase());
+    return ['anger', 'fear', 'sadness','sad'].contains(emotion.toLowerCase());
   }
 
   Future<void> _uploadImage() async {
-    if (_capturedImage == null) return;
+
+    if (_selectedImage == null) return;
+    final id = await SharedPrefs.getUserId();
+    final uri = Uri.parse('http://13.203.212.95:8000/predict-emotion-image?user_id=$id');
+    final request = http.MultipartRequest('POST', uri);
+
+    request.files.add(
+      await http.MultipartFile.fromPath(
+        'file',
+        _selectedImage!.path,
+        filename: p.basename(_selectedImage!.path),
+        contentType: MediaType('image', 'jpeg'),
+      ),
+    );
 
     setState(() {
-      _isCapturing = true;
+      _isLoading = true;
+      _response = '';
     });
 
     try {
-      final result = await _apiDio.predictEmotionViaCamera(_capturedImage!);
+      final response = await request.send();
+      final respStr = await response.stream.bytesToString();
+      setState(() {
+        _response = respStr;
+      });
+      final Map<String, dynamic> result = jsonDecode(respStr);
 
       if (result['status'] == 'success') {
         final emotion = result['emotion'];
 
         if (needsRelaxation(emotion)) {
+          final adjustedEmotion = emotion.toLowerCase() == 'sad' ? 'sadness' : emotion;
           if (mounted) {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => RelaxationMethod(emotion: emotion),
+                builder: (context) => RelaxationMethod(emotion: adjustedEmotion),
               ),
             );
           }
         } else {
-          _showResultDialog(result['emotion']);
+          _showResultDialog(emotion);
         }
       } else {
         _showErrorSnackbar(result['message']);
       }
     } catch (e) {
-      _showErrorSnackbar('Error uploading image: $e');
+      setState(() {
+        _response = 'Upload failed: $e';
+      });
     } finally {
       setState(() {
-        _isCapturing = false;
+        _isLoading = false;
       });
     }
+  }
+
+  Widget _buildImagePreview() {
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Container(
+        height: 550,
+        width: double.infinity,
+        padding: const EdgeInsets.all(12),
+        child:
+            _selectedImage != null
+                ? ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.file(_selectedImage!, fit: BoxFit.cover),
+                )
+                : const Center(child: Text("No image selected")),
+      ),
+    );
+  }
+
+  Widget _buildActionButtons() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        ElevatedButton.icon(
+          onPressed: () => _pickImage(ImageSource.gallery),
+          icon: const Icon(Icons.photo_library),
+          label: const Text("Gallery"),
+        ),
+        ElevatedButton.icon(
+          onPressed: () => _pickImage(ImageSource.camera),
+          icon: const Icon(Icons.camera_alt),
+          label: const Text("Camera"),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildUploadButton() {
+    return ElevatedButton.icon(
+      onPressed: _uploadImage,
+      icon: const Icon(Icons.cloud_upload),
+      label: const Text("Upload"),
+      style: ElevatedButton.styleFrom(
+        minimumSize: const Size.fromHeight(48),
+        textStyle: const TextStyle(fontSize: 16),
+      ),
+    );
   }
 
   void _showErrorSnackbar(String message) {
@@ -169,18 +170,13 @@ class _UserFeelCameraState extends State<UserFeelCamera>
                 const Text('Emotion Detected'),
               ],
             ),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [Text('We detected: $emotion')],
-            ),
+            content: Text('We detected: $emotion'),
             actions: [
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
                   setState(() {
-                    _showPreview = false;
-                    _capturedImage = null;
+                    _selectedImage = null;
                   });
                 },
                 child: const Text('Retake'),
@@ -188,7 +184,7 @@ class _UserFeelCameraState extends State<UserFeelCamera>
               ElevatedButton(
                 onPressed: () {
                   Navigator.of(context).pop();
-                  Navigator.of(context).pop(); // Return to previous screen
+                  Navigator.of(context).pop();
                 },
                 child: const Text('Done'),
               ),
@@ -204,118 +200,24 @@ class _UserFeelCameraState extends State<UserFeelCamera>
         title: const Text('Emotion Detection'),
         centerTitle: true,
         backgroundColor: Theme.of(context).primaryColor,
-        elevation: 0,
       ),
-      body: Column(
-        children: [
-          // Camera guide card
-          Container(
-            padding: const EdgeInsets.all(16),
-            color: Theme.of(context).primaryColor.withOpacity(0.1),
-            child: Row(
-              children: [
-                Icon(Icons.info_outline, color: Theme.of(context).primaryColor),
-                const SizedBox(width: 12),
-                const Expanded(
-                  child: Text(
-                    'Position your face in the center and maintain a neutral expression',
-                    style: TextStyle(fontSize: 14),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          // Camera preview or captured image
-          Expanded(
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                if (_isCameraInitialized && !_showPreview)
-                  CameraPreview(_controller!)
-                else if (_showPreview && _capturedImage != null)
-                  Image.file(_capturedImage!),
-
-                // Face outline guide
-                if (!_showPreview)
-                  Container(
-                    width: 250,
-                    height: 250,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.white, width: 2),
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-
-                if (_isCapturing) const CircularProgressIndicator(),
-              ],
-            ),
-          ),
-          // Bottom controls
-          Container(
-            padding: const EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 10,
-                  offset: const Offset(0, -5),
-                ),
-              ],
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                if (_showPreview) ...[
-                  _buildControlButton(
-                    icon: Icons.refresh,
-                    label: 'Retake',
-                    onPressed: () {
-                      setState(() {
-                        _showPreview = false;
-                        _capturedImage = null;
-                      });
-                    },
-                  ),
-                  _buildControlButton(
-                    icon: Icons.check,
-                    label: 'Upload',
-                    onPressed: _uploadImage,
-                  ),
-                ] else
-                  _buildControlButton(
-                    icon: Icons.camera,
-                    label: 'Capture',
-                    onPressed: _captureImage,
-                  ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildControlButton({
-    required IconData icon,
-    required String label,
-    required VoidCallback onPressed,
-  }) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        ElevatedButton(
-          onPressed: onPressed,
-          style: ElevatedButton.styleFrom(
-            shape: const CircleBorder(),
-            padding: const EdgeInsets.all(24),
-            backgroundColor: Theme.of(context).primaryColor,
-          ),
-          child: Icon(icon, size: 32, color: Colors.white),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            _buildImagePreview(),
+            const SizedBox(height: 16),
+            _buildActionButtons(),
+            const SizedBox(height: 16),
+            if (_isLoading)
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 8),
+                child: CircularProgressIndicator(),
+              ),
+            _buildUploadButton(),
+          ],
         ),
-        const SizedBox(height: 8),
-        Text(label),
-      ],
+      ),
     );
   }
 }

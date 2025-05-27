@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:healthy_heart/commonComponents/healthAlert.dart';
-import 'package:healthy_heart/screens/userFeel/relaxation_method.dart';
-import 'package:healthy_heart/services/apiDio.dart';
-import 'package:healthy_heart/utils/shared_prefs.dart';
+import 'package:MediSafe/commonComponents/healthAlert.dart';
+import 'package:MediSafe/screens/userFeel/relaxation_method.dart';
+import 'package:MediSafe/services/apiDio.dart';
+import 'package:MediSafe/utils/shared_prefs.dart';
 
 class UserFeelSentence extends StatefulWidget {
   const UserFeelSentence({super.key});
@@ -42,10 +42,7 @@ class _UserFeelSentenceState extends State<UserFeelSentence> {
     final userId = await SharedPrefs.getUserId();
 
     try {
-      final result = await _apiDio.predictEmotion(
-        _textController.text,
-        userId!,
-      );
+      final result = await _apiDio.predictEmotion(_textController.text,userId!);
 
       if (result['status'] == 'success') {
         final emotion = result['emotion'];
@@ -55,11 +52,10 @@ class _UserFeelSentenceState extends State<UserFeelSentence> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder:
-                    (context) => RelaxationMethod(
-                      emotion: emotion,
-                      // userText: _textController.text,
-                    ),
+                builder: (context) => RelaxationMethod(
+                  emotion: emotion,
+                  // userText: _textController.text,
+                ),
               ),
             );
           }
@@ -67,7 +63,7 @@ class _UserFeelSentenceState extends State<UserFeelSentence> {
           _showSuccessSnackbar(
             emotion.toLowerCase() == 'joy' || emotion.toLowerCase() == 'love'
                 ? "That's wonderful! Keep embracing this positive feeling! 🌟"
-                : "Thank you for sharing how you feel! 💫",
+                : "Thank you for sharing we detect your emotion as $emotion",
           );
         }
       } else {
@@ -111,11 +107,7 @@ class _UserFeelSentenceState extends State<UserFeelSentence> {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(
-                  Icons.check_circle_outline,
-                  color: Colors.white,
-                  size: 28,
-                ),
+                const Icon(Icons.check_circle_outline, color: Colors.white, size: 28),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
@@ -137,6 +129,7 @@ class _UserFeelSentenceState extends State<UserFeelSentence> {
       }
     });
   }
+
 
   @override
   void dispose() {
@@ -182,7 +175,10 @@ class _UserFeelSentenceState extends State<UserFeelSentence> {
                 const SizedBox(height: 12),
                 const Text(
                   "Your feelings matter. Share them freely...",
-                  style: TextStyle(fontSize: 16, color: Colors.grey),
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.grey,
+                  ),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 30),
@@ -199,7 +195,10 @@ class _UserFeelSentenceState extends State<UserFeelSentence> {
                         maxLines: null,
                         expands: true,
                         textAlignVertical: TextAlignVertical.top,
-                        style: const TextStyle(fontSize: 18, height: 1.5),
+                        style: const TextStyle(
+                          fontSize: 18,
+                          height: 1.5,
+                        ),
                         decoration: InputDecoration(
                           hintText: 'Type your feelings here...',
                           hintStyle: TextStyle(
@@ -226,41 +225,41 @@ class _UserFeelSentenceState extends State<UserFeelSentence> {
                         borderRadius: BorderRadius.circular(16),
                       ),
                     ),
-                    child:
-                        _isLoading
-                            ? const SizedBox(
-                              width: 24,
-                              height: 24,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  Colors.white,
-                                ),
-                              ),
-                            )
-                            : Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  _hasText ? Icons.send : Icons.edit_note,
-                                  size: 24,
-                                ),
-                                const SizedBox(width: 8),
-                                Text(
-                                  _hasText ? "Share Feelings" : "Start Writing",
-                                  style: const TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ],
-                            ),
+                    child: _isLoading
+                        ? const SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      ),
+                    )
+                        : Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          _hasText ? Icons.send : Icons.edit_note,
+                          size: 24,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          _hasText ? "Share Feelings" : "Start Writing",
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 const SizedBox(height: 16),
                 const Text(
                   "Your input is confidential and helps us understand your emotional state",
-                  style: TextStyle(fontSize: 12, color: Colors.grey),
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey,
+                  ),
                   textAlign: TextAlign.center,
                 ),
               ],

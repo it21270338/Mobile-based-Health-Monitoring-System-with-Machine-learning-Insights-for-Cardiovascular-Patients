@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:healthy_heart/services/apiDio.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../services/apiDio.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -30,17 +32,14 @@ class _LoginScreenState extends State<LoginScreen> {
       try {
         // Add your login API call here
         // await authService.login(_emailController.text, _passwordController.text);
-        final success = await apiDio().login(
-          _emailController.text,
-          _passwordController.text,
-          context,
-        );
-        if (success) {
+        final success = await apiDio().login(_emailController.text, _passwordController.text, context);
+        if(success){
           Navigator.pushReplacementNamed(context, '/home');
         }
         // final prefs = await SharedPreferences.getInstance();
         // print("success :${prefs.getString('user_id')}");
         // Navigate to home screen after successful login
+
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -104,9 +103,10 @@ class _LoginScreenState extends State<LoginScreen> {
                             SizedBox(height: 24),
                             Text(
                               'Welcome Back',
-                              style: Theme.of(
-                                context,
-                              ).textTheme.headlineMedium?.copyWith(
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headlineMedium
+                                  ?.copyWith(
                                 fontWeight: FontWeight.bold,
                                 color: Colors.black87,
                               ),
@@ -114,8 +114,12 @@ class _LoginScreenState extends State<LoginScreen> {
                             SizedBox(height: 12),
                             Text(
                               'Sign in to continue',
-                              style: Theme.of(context).textTheme.bodyLarge
-                                  ?.copyWith(color: Colors.grey[600]),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge
+                                  ?.copyWith(
+                                color: Colors.grey[600],
+                              ),
                             ),
                           ],
                         ),
@@ -140,21 +144,14 @@ class _LoginScreenState extends State<LoginScreen> {
                                 decoration: InputDecoration(
                                   labelText: 'Email',
                                   hintText: 'Enter your email',
-                                  prefixIcon: Icon(
-                                    Icons.email_outlined,
-                                    color: Colors.grey[600],
-                                  ),
+                                  prefixIcon: Icon(Icons.email_outlined, color: Colors.grey[600]),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(12),
-                                    borderSide: BorderSide(
-                                      color: Colors.grey[400]!,
-                                    ),
+                                    borderSide: BorderSide(color: Colors.grey[400]!),
                                   ),
                                   enabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(12),
-                                    borderSide: BorderSide(
-                                      color: Colors.purple[900]!,
-                                    ),
+                                    borderSide: BorderSide(color: Colors.purple[900]!),
                                   ),
                                   focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(12),
@@ -165,10 +162,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ),
                                   filled: true,
                                   fillColor: Colors.grey[50],
-                                  contentPadding: EdgeInsets.symmetric(
-                                    vertical: 16,
-                                    horizontal: 16,
-                                  ),
+                                  contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
                                   labelStyle: TextStyle(
                                     color: Colors.grey[600],
                                     fontSize: 16,
@@ -177,8 +171,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     color: Colors.grey[500],
                                     fontSize: 16,
                                   ),
-                                  floatingLabelBehavior:
-                                      FloatingLabelBehavior.auto,
+                                  floatingLabelBehavior: FloatingLabelBehavior.auto,
                                 ),
                                 style: TextStyle(
                                   color: Colors.black87,
@@ -188,9 +181,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   if (value == null || value.isEmpty) {
                                     return 'Please enter your email';
                                   }
-                                  if (!RegExp(
-                                    r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
-                                  ).hasMatch(value)) {
+                                  if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
                                     return 'Please enter a valid email';
                                   }
                                   return null;
@@ -205,15 +196,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                 decoration: InputDecoration(
                                   labelText: 'Password',
                                   hintText: 'Enter your password',
-                                  prefixIcon: Icon(
-                                    Icons.lock_outline,
-                                    color: Colors.grey[600],
-                                  ),
+                                  prefixIcon: Icon(Icons.lock_outline, color: Colors.grey[600]),
                                   suffixIcon: IconButton(
                                     icon: Icon(
-                                      _obscurePassword
-                                          ? Icons.visibility
-                                          : Icons.visibility_off,
+                                      _obscurePassword ? Icons.visibility : Icons.visibility_off,
                                       color: Colors.grey[600],
                                     ),
                                     onPressed: () {
@@ -224,15 +210,11 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(12),
-                                    borderSide: BorderSide(
-                                      color: Colors.grey[400]!,
-                                    ),
+                                    borderSide: BorderSide(color: Colors.grey[400]!),
                                   ),
                                   enabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(12),
-                                    borderSide: BorderSide(
-                                      color: Colors.purple[900]!,
-                                    ),
+                                    borderSide: BorderSide(color: Colors.purple[900]!),
                                   ),
                                   focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(12),
@@ -243,10 +225,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ),
                                   filled: true,
                                   fillColor: Colors.grey[50],
-                                  contentPadding: EdgeInsets.symmetric(
-                                    vertical: 16,
-                                    horizontal: 16,
-                                  ),
+                                  contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
                                   labelStyle: TextStyle(
                                     color: Colors.grey[600],
                                     fontSize: 16,
@@ -255,8 +234,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     color: Colors.grey[500],
                                     fontSize: 16,
                                   ),
-                                  floatingLabelBehavior:
-                                      FloatingLabelBehavior.auto,
+                                  floatingLabelBehavior: FloatingLabelBehavior.auto,
                                 ),
                                 style: TextStyle(
                                   color: Colors.black87,
@@ -304,24 +282,23 @@ class _LoginScreenState extends State<LoginScreen> {
                           backgroundColor: Theme.of(context).primaryColor,
                           elevation: 4,
                         ),
-                        child:
-                            _isLoading
-                                ? SizedBox(
-                                  height: 20,
-                                  width: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    color: Colors.white,
-                                  ),
-                                )
-                                : Text(
-                                  'Login',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                  ),
-                                ),
+                        child: _isLoading
+                            ? SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
+                            : Text(
+                          'Login',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
                       ),
                       SizedBox(height: 16),
 
@@ -336,7 +313,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             children: [
                               TextSpan(
                                 text: "Don't have an account? ",
-                                style: TextStyle(color: Colors.grey[600]),
+                                style: TextStyle(
+                                  color: Colors.grey[600],
+                                ),
                               ),
                               TextSpan(
                                 text: 'Register',

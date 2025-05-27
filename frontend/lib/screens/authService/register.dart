@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:healthy_heart/commonComponents/healthAlert.dart';
-import 'package:healthy_heart/services/apiDio.dart';
+
+import '../../services/apiDio.dart';
+
 
 class RegisterScreen extends StatefulWidget {
   @override
@@ -29,7 +30,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     'Spouse',
     'Sibling',
     'Child',
-    'Other',
+    'Other'
   ];
 
   @override
@@ -127,10 +128,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               backgroundColor: Colors.transparent,
               elevation: 0,
               leading: IconButton(
-                icon: Icon(
-                  Icons.arrow_back,
-                  color: Theme.of(context).primaryColor,
-                ),
+                icon: Icon(Icons.arrow_back, color: Theme.of(context).primaryColor),
                 onPressed: () => Navigator.pop(context),
               ),
             ),
@@ -156,9 +154,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             SizedBox(height: 16),
                             Text(
                               'Create Account',
-                              style: Theme.of(
-                                context,
-                              ).textTheme.headlineMedium?.copyWith(
+                              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                                 fontWeight: FontWeight.bold,
                                 color: Theme.of(context).primaryColor,
                               ),
@@ -166,8 +162,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             SizedBox(height: 8),
                             Text(
                               'Join our healthcare community',
-                              style: Theme.of(context).textTheme.bodyLarge
-                                  ?.copyWith(color: Colors.grey[600]),
+                              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                color: Colors.grey[600],
+                              ),
                             ),
                           ],
                         ),
@@ -195,16 +192,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   ),
                                   enabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(12),
-                                    borderSide: BorderSide(
-                                      color: Colors.purple[900]!,
-                                    ),
+                                    borderSide: BorderSide(color: Colors.purple[900]!),
                                   ),
                                 ),
-                                validator:
-                                    (value) =>
-                                        value?.isEmpty ?? true
-                                            ? 'Please enter your name'
-                                            : null,
+                                validator: (value) => value?.isEmpty ?? true
+                                    ? 'Please enter your name' : null,
                               ),
                               SizedBox(height: 16),
                               TextFormField(
@@ -218,18 +210,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   ),
                                   enabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(12),
-                                    borderSide: BorderSide(
-                                      color: Colors.purple[900]!,
-                                    ),
+                                    borderSide: BorderSide(color: Colors.purple[900]!),
                                   ),
                                 ),
                                 validator: (value) {
                                   if (value?.isEmpty ?? true) {
                                     return 'Please enter your email';
                                   }
-                                  if (!RegExp(
-                                    r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
-                                  ).hasMatch(value!)) {
+                                  if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value!)) {
                                     return 'Please enter a valid email';
                                   }
                                   return null;
@@ -243,33 +231,25 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   labelText: 'Password',
                                   prefixIcon: Icon(Icons.lock_outline),
                                   suffixIcon: IconButton(
-                                    icon: Icon(
-                                      _obscurePassword
-                                          ? Icons.visibility
-                                          : Icons.visibility_off,
+                                    icon: Icon(_obscurePassword
+                                        ? Icons.visibility
+                                        : Icons.visibility_off
                                     ),
-                                    onPressed:
-                                        () => setState(
-                                          () =>
-                                              _obscurePassword =
-                                                  !_obscurePassword,
-                                        ),
+                                    onPressed: () => setState(() =>
+                                    _obscurePassword = !_obscurePassword
+                                    ),
                                   ),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                   enabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(12),
-                                    borderSide: BorderSide(
-                                      color: Colors.purple[900]!,
-                                    ),
+                                    borderSide: BorderSide(color: Colors.purple[900]!),
                                   ),
                                 ),
-                                validator:
-                                    (value) =>
-                                        value!.length < 6
-                                            ? 'Password must be at least 6 characters'
-                                            : null,
+                                validator: (value) => value!.length < 6
+                                    ? 'Password must be at least 6 characters'
+                                    : null,
                               ),
                               SizedBox(height: 16),
                               TextFormField(
@@ -279,33 +259,25 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   labelText: 'Confirm Password',
                                   prefixIcon: Icon(Icons.lock_outline),
                                   suffixIcon: IconButton(
-                                    icon: Icon(
-                                      _obscureConfirmPassword
-                                          ? Icons.visibility
-                                          : Icons.visibility_off,
+                                    icon: Icon(_obscureConfirmPassword
+                                        ? Icons.visibility
+                                        : Icons.visibility_off
                                     ),
-                                    onPressed:
-                                        () => setState(
-                                          () =>
-                                              _obscureConfirmPassword =
-                                                  !_obscureConfirmPassword,
-                                        ),
+                                    onPressed: () => setState(() =>
+                                    _obscureConfirmPassword = !_obscureConfirmPassword
+                                    ),
                                   ),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                   enabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(12),
-                                    borderSide: BorderSide(
-                                      color: Colors.purple[900]!,
-                                    ),
+                                    borderSide: BorderSide(color: Colors.purple[900]!),
                                   ),
                                 ),
-                                validator:
-                                    (value) =>
-                                        value != _passwordController.text
-                                            ? 'Passwords do not match'
-                                            : null,
+                                validator: (value) => value != _passwordController.text
+                                    ? 'Passwords do not match'
+                                    : null,
                               ),
                             ],
                           ),
@@ -313,10 +285,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
 
                       // Health Information Section
-                      _buildSectionHeader(
-                        'Health Information',
-                        Icons.monitor_weight,
-                      ),
+                      _buildSectionHeader('Health Information', Icons.monitor_weight),
                       Card(
                         elevation: 2,
                         shape: RoundedRectangleBorder(
@@ -336,17 +305,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                         labelText: 'Height',
                                         prefixIcon: Icon(Icons.height),
                                         border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            8,
-                                          ),
+                                          borderRadius: BorderRadius.circular(8),
                                         ),
                                         enabledBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            12,
-                                          ),
-                                          borderSide: BorderSide(
-                                            color: Colors.purple[900]!,
-                                          ),
+                                          borderRadius: BorderRadius.circular(12),
+                                          borderSide: BorderSide(color: Colors.purple[900]!),
                                         ),
                                       ),
                                       validator: (value) {
@@ -370,17 +333,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                         labelText: 'Weight',
                                         prefixIcon: Icon(Icons.monitor_weight),
                                         border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            8,
-                                          ),
+                                          borderRadius: BorderRadius.circular(8),
                                         ),
                                         enabledBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            12,
-                                          ),
-                                          borderSide: BorderSide(
-                                            color: Colors.purple[900]!,
-                                          ),
+                                          borderRadius: BorderRadius.circular(12),
+                                          borderSide: BorderSide(color: Colors.purple[900]!),
                                         ),
                                       ),
                                       validator: (value) {
@@ -423,16 +380,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   ),
                                   enabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(12),
-                                    borderSide: BorderSide(
-                                      color: Colors.purple[900]!,
-                                    ),
+                                    borderSide: BorderSide(color: Colors.purple[900]!),
                                   ),
                                 ),
-                                validator:
-                                    (value) =>
-                                        value?.isEmpty ?? true
-                                            ? 'Please enter contact name'
-                                            : null,
+                                validator: (value) => value?.isEmpty ?? true
+                                    ? 'Please enter contact name'
+                                    : null,
                               ),
                               SizedBox(height: 16),
                               TextFormField(
@@ -446,18 +399,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   ),
                                   enabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(12),
-                                    borderSide: BorderSide(
-                                      color: Colors.purple[900]!,
-                                    ),
+                                    borderSide: BorderSide(color: Colors.purple[900]!),
                                   ),
                                 ),
                                 validator: (value) {
                                   if (value?.isEmpty ?? true) {
                                     return 'Please enter contact email';
                                   }
-                                  if (!RegExp(
-                                    r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
-                                  ).hasMatch(value!)) {
+                                  if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value!)) {
                                     return 'Please enter a valid email';
                                   }
                                   return null;
@@ -475,16 +424,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   ),
                                   enabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(12),
-                                    borderSide: BorderSide(
-                                      color: Colors.purple[900]!,
-                                    ),
+                                    borderSide: BorderSide(color: Colors.purple[900]!),
                                   ),
                                 ),
-                                validator:
-                                    (value) =>
-                                        value?.isEmpty ?? true
-                                            ? 'Please enter contact phone'
-                                            : null,
+                                validator: (value) => value?.isEmpty ?? true
+                                    ? 'Please enter contact phone'
+                                    : null,
                               ),
                               SizedBox(height: 16),
                               DropdownButtonFormField<String>(
@@ -497,28 +442,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   ),
                                   enabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(12),
-                                    borderSide: BorderSide(
-                                      color: Colors.purple[900]!,
-                                    ),
+                                    borderSide: BorderSide(color: Colors.purple[900]!),
                                   ),
                                 ),
-                                items:
-                                    _relationships.map((String relationship) {
-                                      return DropdownMenuItem<String>(
-                                        value: relationship,
-                                        child: Text(relationship),
-                                      );
-                                    }).toList(),
+                                items: _relationships.map((String relationship) {
+                                  return DropdownMenuItem<String>(
+                                    value: relationship,
+                                    child: Text(relationship),
+                                  );
+                                }).toList(),
                                 onChanged: (String? newValue) {
                                   setState(() {
                                     _selectedRelationship = newValue;
                                   });
                                 },
-                                validator:
-                                    (value) =>
-                                        value == null
-                                            ? 'Please select relationship'
-                                            : null,
+                                validator: (value) => value == null
+                                    ? 'Please select relationship'
+                                    : null,
                               ),
                             ],
                           ),
@@ -535,23 +475,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
-                        child:
-                            _isLoading
-                                ? SizedBox(
-                                  height: 20,
-                                  width: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    color: Colors.white,
-                                  ),
-                                )
-                                : Text(
-                                  'Create Account',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
+                        child: _isLoading
+                            ? SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
+                            : Text(
+                          'Create Account',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
                       SizedBox(height: 16),
 

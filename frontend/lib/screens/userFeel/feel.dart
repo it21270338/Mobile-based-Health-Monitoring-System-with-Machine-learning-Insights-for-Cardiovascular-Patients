@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:healthy_heart/screens/userFeel/relaxation_method.dart';
-import 'package:healthy_heart/screens/userFeel/user_feel_camera.dart';
-import 'package:healthy_heart/screens/userFeel/user_feel_sentence.dart';
+import 'package:MediSafe/screens/userFeel/relaxation_method.dart';
+import 'package:MediSafe/screens/userFeel/user_feel_camera.dart';
+import 'package:MediSafe/screens/userFeel/user_feel_sentence.dart';
 
 class UserFeel extends StatelessWidget {
   const UserFeel({super.key});
@@ -40,9 +40,9 @@ class UserFeel extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    _buildEmojiCard('😠', 'Angry', 'anger', context),
-                    _buildEmojiCard('😔', 'Sad', 'sadness', context),
-                    _buildEmojiCard('😨', 'Fear', 'fear', context),
+                    _buildEmojiCard('😠', 'Angry','anger',context),
+                    _buildEmojiCard('😔', 'sadness','sadness',context),
+                    _buildEmojiCard('😨', 'Fear','fear',context),
                   ],
                 ),
                 const SizedBox(height: 40),
@@ -69,7 +69,10 @@ class UserFeel extends StatelessWidget {
                           const SizedBox(height: 16),
                           const Text(
                             "Choose how you'd like to express yourself",
-                            style: TextStyle(fontSize: 16, color: Colors.grey),
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.grey,
+                            ),
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: 40),
@@ -78,7 +81,7 @@ class UserFeel extends StatelessWidget {
                             "Express in Words",
                             Icons.edit_note,
                             Colors.blue,
-                            () => Navigator.push(
+                                () => Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => const UserFeelSentence(),
@@ -91,7 +94,7 @@ class UserFeel extends StatelessWidget {
                             "Use Facial Expression",
                             Icons.face_retouching_natural,
                             Colors.green,
-                            () => Navigator.push(
+                                () => Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => const UserFeelCamera(),
@@ -110,7 +113,9 @@ class UserFeel extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: Colors.white.withOpacity(0.9),
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.grey.withOpacity(0.2)),
+                    border: Border.all(
+                      color: Colors.grey.withOpacity(0.2),
+                    ),
                   ),
                   child: const Row(
                     children: [
@@ -119,7 +124,10 @@ class UserFeel extends StatelessWidget {
                       Expanded(
                         child: Text(
                           "Regular emotion check-ins can help improve your mental well-being",
-                          style: TextStyle(fontSize: 14, color: Colors.grey),
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey,
+                          ),
                         ),
                       ),
                     ],
@@ -133,18 +141,15 @@ class UserFeel extends StatelessWidget {
     );
   }
 
-  Widget _buildEmojiCard(
-    String emoji,
-    String label,
-    String val,
-    BuildContext context,
-  ) {
+  Widget _buildEmojiCard(String emoji, String label, String val ,BuildContext context) {
     return GestureDetector(
       onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => RelaxationMethod(emotion: val),
+            builder: (context) => RelaxationMethod(
+              emotion: val,
+            ),
           ),
         );
       },
@@ -164,22 +169,32 @@ class UserFeel extends StatelessWidget {
                 ),
               ],
             ),
-            child: Text(emoji, style: const TextStyle(fontSize: 24)),
+            child: Text(
+              emoji,
+              style: const TextStyle(fontSize: 24),
+            ),
           ),
           const SizedBox(height: 8),
-          Text(label, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 12,
+              color: Colors.grey,
+            ),
+          ),
         ],
       ),
     );
   }
 
+
   Widget _buildOptionButton(
-    BuildContext context,
-    String label,
-    IconData icon,
-    Color color,
-    VoidCallback onTap,
-  ) {
+      BuildContext context,
+      String label,
+      IconData icon,
+      Color color,
+      VoidCallback onTap,
+      ) {
     return Container(
       width: double.infinity,
       height: 80,
@@ -202,7 +217,10 @@ class UserFeel extends StatelessWidget {
             const SizedBox(width: 12),
             Text(
               label,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ],
         ),

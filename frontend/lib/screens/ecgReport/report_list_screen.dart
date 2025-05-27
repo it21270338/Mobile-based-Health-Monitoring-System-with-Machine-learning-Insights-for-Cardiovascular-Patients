@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:healthy_heart/screens/ecgReport/report_detail_screen.dart';
+import 'package:MediSafe/screens/ecgReport/report_detail_screen.dart';
 import 'package:intl/intl.dart';
 
 import '../../models/ecg_report_summary.dart';
 import '../../services/ecg_service.dart';
+
 
 class ReportListScreen extends StatefulWidget {
   const ReportListScreen({Key? key}) : super(key: key);
@@ -53,9 +54,9 @@ class _ReportListScreenState extends State<ReportListScreen> {
       setState(() {
         _isLoading = false;
       });
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Error loading reports: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error loading reports: $e')),
+      );
     }
   }
 
@@ -87,77 +88,70 @@ class _ReportListScreenState extends State<ReportListScreen> {
       ),
       body: RefreshIndicator(
         onRefresh: _refreshReports,
-        child:
-            _reports.isEmpty && !_isLoading
-                ? const Center(child: Text('No ECG reports found'))
-                : NotificationListener<ScrollNotification>(
-                  onNotification: (ScrollNotification scrollInfo) {
-                    if (!_isLoading &&
-                        scrollInfo.metrics.pixels ==
-                            scrollInfo.metrics.maxScrollExtent &&
-                        _reports.length < _totalReports) {
-                      _loadReports();
-                      return true;
-                    }
-                    return false;
-                  },
-                  child: ListView.builder(
-                    itemCount: _reports.length + (_isLoading ? 1 : 0),
-                    itemBuilder: (context, index) {
-                      if (index == _reports.length) {
-                        return const Center(
-                          child: Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: CircularProgressIndicator(),
-                          ),
-                        );
-                      }
+        child: _reports.isEmpty && !_isLoading
+            ? const Center(child: Text('No ECG reports found'))
+            : NotificationListener<ScrollNotification>(
+          onNotification: (ScrollNotification scrollInfo) {
+            if (!_isLoading &&
+                scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent &&
+                _reports.length < _totalReports) {
+              _loadReports();
+              return true;
+            }
+            return false;
+          },
+          child: ListView.builder(
+            itemCount: _reports.length + (_isLoading ? 1 : 0),
+            itemBuilder: (context, index) {
+              if (index == _reports.length) {
+                return const Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: CircularProgressIndicator(),
+                  ),
+                );
+              }
 
-                      final report = _reports[index];
-                      return Card(
-                        margin: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 8,
-                        ),
-                        child: InkWell(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder:
-                                    (context) =>
-                                        ReportDetailScreen(reportId: report.id),
-                              ),
-                            );
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const SizedBox(height: 8),
-                                Text(
-                                  _formatDateTime(report.timestamp),
-                                  style: TextStyle(
-                                    color: Colors.grey[600],
-                                    fontSize: 12,
-                                  ),
-                                ),
-                                const SizedBox(height: 12),
-                                Text(
-                                  report.shortDescription,
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(fontSize: 14),
-                                ),
-                              ],
-                            ),
+              final report = _reports[index];
+              return Card(
+                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ReportDetailScreen(reportId: report.id),
+                      ),
+                    );
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 8),
+                        Text(
+                          _formatDateTime(report.timestamp),
+                          style: TextStyle(
+                            color: Colors.grey[600],
+                            fontSize: 12,
                           ),
                         ),
-                      );
-                    },
+                        const SizedBox(height: 12),
+                        Text(
+                          report.shortDescription,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
+              );
+            },
+          ),
+        ),
       ),
     );
   }

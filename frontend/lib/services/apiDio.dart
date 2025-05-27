@@ -4,25 +4,24 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-
+import 'package:MediSafe/models/questions_and_answers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../models/questions_and_answers.dart';
+import 'package:http_parser/http_parser.dart';
 
 var options = BaseOptions(
-  baseUrl: 'http://13.201.188.36:8000',
-
-  //   baseUrl: 'http://10.0.2.2:8000',
+  // baseUrl: 'http://13.203.212.95:8000',
+    baseUrl: 'http://13.203.212.95:8000',
   //   baseUrl: 'http://192.168.1.169:8000',
+
 );
 var options2 = BaseOptions(
   baseUrl: 'https://pleasing-pup-positive.ngrok-free.app',
-  //   baseUrl: 'http://10.0.2.2:8000',
+  //dulanrashmika3@gmail.com   baseUrl: 'http://13.203.212.95:8000',
   //   baseUrl: 'http://192.168.1.169:8000',
 );
 
 var dio = Dio(options);
-var dio2 = Dio(options2);
+var dio2 = Dio(options);
 
 class apiDio {
   late SharedPreferences prefs;
@@ -38,7 +37,10 @@ class apiDio {
 
   // Login data structure
   Map<String, dynamic> loginData(String email, String password) {
-    return {'email': email, 'password': password};
+    return {
+      'email': email,
+      'password': password,
+    };
   }
 
   // Registration data structure
@@ -50,15 +52,15 @@ class apiDio {
     required String emergencyContactEmail,
     required String emergencyContactPhone,
     required String relationship,
-    required String height, // New parameter
-    required String weight, // New parameter
+    required String height,  // New parameter
+    required String weight,  // New parameter
   }) {
     return {
       'name': name,
       'email': email,
       'password': password,
-      'height': double.tryParse(height) ?? 0, // Convert to double
-      'weight': double.tryParse(weight) ?? 0, // Convert to double
+      'height': double.tryParse(height) ?? 0,  // Convert to double
+      'weight': double.tryParse(weight) ?? 0,  // Convert to double
       'emergency_contact': {
         'name': emergencyContactName,
         'email': emergencyContactEmail,
@@ -68,18 +70,16 @@ class apiDio {
     };
   }
 
-  Future<bool> login(
-    String email,
-    String password,
-    BuildContext context,
-  ) async {
+  Future<bool> login(String email, String password, BuildContext context) async {
     try {
       final loginPayload = loginData(email, password);
 
       final response = await dio.post(
         '/login',
         data: json.encode(loginPayload),
-        options: Options(contentType: Headers.jsonContentType),
+        options: Options(
+          contentType: Headers.jsonContentType,
+        ),
       );
 
       if (response.statusCode == 200) {
@@ -113,7 +113,10 @@ class apiDio {
       }
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(errorMessage), backgroundColor: Colors.red),
+        SnackBar(
+          content: Text(errorMessage),
+          backgroundColor: Colors.red,
+        ),
       );
 
       return false;
@@ -150,7 +153,7 @@ class apiDio {
             "email": familyEmail,
             "phone": familyPhone,
             "relationship": relationship,
-          },
+          }
         },
       );
 
@@ -165,6 +168,7 @@ class apiDio {
     }
   }
 
+
   Future<Map<String, dynamic>> register({
     required BuildContext context,
     required String name,
@@ -174,8 +178,8 @@ class apiDio {
     required String emergencyContactEmail,
     required String emergencyContactPhone,
     required String relationship,
-    required String height, // New parameter
-    required String weight, // New parameter
+    required String height,  // New parameter
+    required String weight,  // New parameter
   }) async {
     try {
       final registrationPayload = registrationData(
@@ -186,22 +190,22 @@ class apiDio {
         emergencyContactEmail: emergencyContactEmail,
         emergencyContactPhone: emergencyContactPhone,
         relationship: relationship,
-        height: height, // Pass height
-        weight: weight, // Pass weight
+        height: height,  // Pass height
+        weight: weight,  // Pass weight
       );
 
       final response = await dio.post(
         '/register',
         data: json.encode(registrationPayload),
-        options: Options(contentType: Headers.jsonContentType),
+        options: Options(
+          contentType: Headers.jsonContentType,
+        ),
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         return response.data;
       } else {
-        throw Exception(
-          'Registration failed with status: ${response.statusCode}',
-        );
+        throw Exception('Registration failed with status: ${response.statusCode}');
       }
     } on DioException catch (e) {
       String errorMessage = 'Registration failed';
@@ -211,7 +215,10 @@ class apiDio {
       }
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(errorMessage), backgroundColor: Colors.red),
+        SnackBar(
+          content: Text(errorMessage),
+          backgroundColor: Colors.red,
+        ),
       );
 
       throw Exception(errorMessage);
@@ -234,7 +241,9 @@ class apiDio {
       if (token != null) {
         await dio.post(
           '/logout',
-          options: Options(headers: {'Authorization': 'Bearer $token'}),
+          options: Options(
+            headers: {'Authorization': 'Bearer $token'},
+          ),
         );
       }
 
@@ -279,7 +288,11 @@ class apiDio {
       // Make API request
       final response = await dio.get(
         '/users/$userId',
-        options: Options(headers: {'Authorization': 'Bearer $token'}),
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
       );
 
       if (response.statusCode == 200) {
@@ -300,7 +313,10 @@ class apiDio {
       }
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(errorMessage), backgroundColor: Colors.red),
+        SnackBar(
+          content: Text(errorMessage),
+          backgroundColor: Colors.red,
+        ),
       );
 
       throw Exception(errorMessage);
@@ -317,9 +333,9 @@ class apiDio {
   }
 
   Future<Map<String, dynamic>> updateUserProfile(
-    BuildContext context,
-    Map<String, dynamic> profileData,
-  ) async {
+      BuildContext context,
+      Map<String, dynamic> profileData,
+      ) async {
     try {
       // Get user ID from SharedPreferences
       await _initPrefs();
@@ -334,7 +350,7 @@ class apiDio {
         'name': profileData['profile']['name'],
         'height': profileData['profile']['height'],
         'weight': profileData['profile']['weight'],
-        'emergency_contact': profileData['emergency_contact'],
+        'emergency_contact': profileData['emergency_contact']
       };
       print(apiData);
       // Make API request
@@ -342,7 +358,9 @@ class apiDio {
         '/users/$userId',
         data: profileData,
         options: Options(
-          headers: {'Authorization': 'Bearer $token'},
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
           contentType: Headers.jsonContentType,
         ),
       );
@@ -371,7 +389,10 @@ class apiDio {
       }
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(errorMessage), backgroundColor: Colors.red),
+        SnackBar(
+          content: Text(errorMessage),
+          backgroundColor: Colors.red,
+        ),
       );
 
       throw Exception(errorMessage);
@@ -399,13 +420,12 @@ class apiDio {
   // predict Emotion via Text
 
   Map<String, dynamic> emotionData(String sentence) {
-    return {'sentence': sentence};
+    return {
+      'sentence': sentence,
+    };
   }
 
-  Future<Map<String, dynamic>> predictEmotion(
-    String sentence,
-    String userId,
-  ) async {
+  Future<Map<String, dynamic>> predictEmotion(String sentence, String userId) async {
     try {
       var emotion_data = emotionData(sentence);
       String dataJson = json.encode(emotion_data);
@@ -416,7 +436,9 @@ class apiDio {
         queryParameters: {
           'user_id': userId, // 👈 Send userId in query
         },
-        options: Options(contentType: Headers.jsonContentType),
+        options: Options(
+          contentType: Headers.jsonContentType,
+        ),
       );
 
       // Handle response
@@ -425,16 +447,23 @@ class apiDio {
         return {
           'emotion': response.data['emotion'],
           'probability': response.data['probability'],
-          'status': 'success',
+          'status': 'success'
         };
       } else {
-        return {'status': 'error', 'message': 'Failed to predict emotion'};
+        return {
+          'status': 'error',
+          'message': 'Failed to predict emotion',
+        };
       }
     } catch (e) {
       print('Error predicting emotion: $e');
-      return {'status': 'error', 'message': e.toString()};
+      return {
+        'status': 'error',
+        'message': e.toString(),
+      };
     }
   }
+
 
   Map<String, dynamic> heartRiskData({
     required double heartRate,
@@ -459,10 +488,8 @@ class apiDio {
     };
   }
 
-  Future<Map<String, dynamic>> getPainHistory(
-    String userId,
-    String timeRange,
-  ) async {
+  Future<Map<String, dynamic>> getPainHistory(String userId ,String timeRange) async {
+
     try {
       final response = await dio.get(
         '/get_pain_history/$userId',
@@ -479,6 +506,7 @@ class apiDio {
       throw Exception('Error fetching pain history: $e');
     }
   }
+
 
   Future<String> predictHeartRiskViaLocation({
     required int heartRate,
@@ -540,7 +568,9 @@ class apiDio {
         '/predict_risk',
         data: heartRiskRequestData,
         queryParameters: {'user_id': userId},
-        options: Options(contentType: Headers.jsonContentType),
+        options: Options(
+          contentType: Headers.jsonContentType,
+        ),
       );
 
       if (response.statusCode == 200) {
@@ -551,9 +581,7 @@ class apiDio {
           'risk_probability': response.data['risk_probability'],
           'bmi_category': response.data['bmi_category'],
           'health_score': response.data['health_score'],
-          'recommendations': List<String>.from(
-            response.data['recommendations'],
-          ),
+          'recommendations': List<String>.from(response.data['recommendations']),
           'timestamp': response.data['timestamp'],
         };
       } else {
@@ -561,23 +589,25 @@ class apiDio {
       }
     } catch (e) {
       print('Error predicting heart risk: $e');
-      return {'status': 'error', 'message': e.toString()};
+      return {
+        'status': 'error',
+        'message': e.toString(),
+      };
     }
   }
 
+
   Future<List<Map<String, dynamic>>> getHealthRecords(
-    String userId,
-    String period,
-  ) async {
+      String userId, String period) async {
     try {
-      Response response = await dio.get('/health-records/$userId/$period');
+      Response response = await dio.get(
+        '/health-records/$userId/$period',
+      );
 
       if (response.statusCode == 200) {
         List<Map<String, dynamic>> records = List<Map<String, dynamic>>.from(
-          response.data['records'].map(
-            (record) => Map<String, dynamic>.from(record),
-          ),
-        );
+            response.data['records']
+                .map((record) => Map<String, dynamic>.from(record)));
         return records;
       } else {
         throw Exception('Failed to fetch health records');
@@ -592,7 +622,7 @@ class apiDio {
     print("userId $userId");
     try {
       Response response = await dio.get(
-        '/latest-health-records/$userId/latest', // New endpoint
+        '/latest-health-records/$userId/latest',  // New endpoint
       );
 
       if (response.statusCode == 200) {
@@ -605,19 +635,20 @@ class apiDio {
       } else {
         return {
           'status': 'error',
-          'message': 'Failed to fetch latest health record',
+          'message': 'Failed to fetch latest health record'
         };
       }
     } catch (e) {
       print('Error fetching latest health record: $e');
-      return {'status': 'error', 'message': e.toString()};
+      return {
+        'status': 'error',
+        'message': e.toString()
+      };
     }
   }
 
-  Future<Map<String, dynamic>> uploadECGReport(
-    File imageFile,
-    String userId,
-  ) async {
+
+  Future<Map<String, dynamic>> uploadECGReport(File imageFile, String userId) async {
     try {
       String fileName = imageFile.path.split('/').last;
       FormData formData = FormData.fromMap({
@@ -630,16 +661,23 @@ class apiDio {
       Response response = await dio.post(
         '/upload-ecg/$userId',
         data: formData,
-        options: Options(headers: {'Content-Type': 'multipart/form-data'}),
+        options: Options(
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        ),
       );
 
-      if (response.statusCode == 200) {
+      print('Status: ${response.data['status']}');
+
+
+      if (response.statusCode == 200 && response.data['status'] == "success") {
         // Parse questions and answers
         List<QuestionsAndAnswers> qaList = [];
         if (response.data['questions_and_answers'] != null) {
           qaList = List<QuestionsAndAnswers>.from(
             response.data['questions_and_answers'].map(
-              (qa) => QuestionsAndAnswers.fromJson(qa),
+                  (qa) => QuestionsAndAnswers.fromJson(qa),
             ),
           );
         }
@@ -650,11 +688,17 @@ class apiDio {
           'questions_and_answers': qaList,
         };
       } else {
-        return {'status': 'error', 'message': 'Failed to upload ECG report'};
+        return {
+          'status': 'error',
+          'message': 'Failed to upload ECG report || Uploaded image does not appear to be an ECG',
+        };
       }
     } catch (e) {
       print('Error uploading ECG report: $e');
-      return {'status': 'error', 'message': e.toString()};
+      return {
+        'status': 'error',
+        'message': e.toString(),
+      };
     }
   }
 
@@ -667,6 +711,7 @@ class apiDio {
         'file': await MultipartFile.fromFile(
           imageFile.path,
           filename: fileName,
+          contentType: MediaType('image', 'jpeg'),
         ),
       });
 
@@ -674,37 +719,50 @@ class apiDio {
       Response response = await dio2.post(
         '/predict-emotion-image',
         data: formData,
-        options: Options(headers: {'Content-Type': 'multipart/form-data'}),
+        options: Options(
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        ),
       );
 
       if (response.statusCode == 200) {
-        return {
-          'status': 'success',
-          'emotion': response.data['emotion'],
-          'message': response.data['message'],
-        };
+        print(response);
+        if (response.data['status'] == 'success') {
+          return {
+            'status': 'success',
+            'emotion': response.data['emotion'],
+            'message': response.data['message'],
+          };
+        }else{
+          return {
+            'status': 'error',
+            'message': 'Failed to detect emotion',
+          };
+        }
       } else {
-        return {'status': 'error', 'message': 'Failed to detect emotion'};
+        return {
+          'status': 'error',
+          'message': 'Failed to detect emotion',
+        };
       }
     } catch (e) {
       print('Error predicting emotion from image: $e');
-      return {'status': 'error', 'message': e.toString()};
+      return {
+        'status': 'error',
+        'message': e.toString(),
+      };
     }
   }
 
-  Future<bool> sendNotification(
-    String userId,
-    String type, {
-    String? emotion,
-  }) async {
+  Future<bool> sendNotification(String userId, String type, {String? emotion}) async {
     try {
       final response = await dio.post(
         '/notifications/send',
         data: {
           "userID": userId,
           "type": type,
-          if (emotion != null)
-            "emotion": emotion, // Include emotion only if type is "emotion"
+          if (emotion != null) "emotion": emotion,  // Include emotion only if type is "emotion"
         },
         options: Options(headers: {"Content-Type": "application/json"}),
       );
@@ -737,7 +795,11 @@ class apiDio {
       // Make API request
       final response = await dio.get(
         '/metrics/$userId',
-        options: Options(headers: {'Authorization': 'Bearer $token'}),
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
       );
 
       if (response.statusCode == 200) {
@@ -753,7 +815,10 @@ class apiDio {
       }
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(errorMessage), backgroundColor: Colors.red),
+        SnackBar(
+          content: Text(errorMessage),
+          backgroundColor: Colors.red,
+        ),
       );
 
       throw Exception(errorMessage);
@@ -769,10 +834,7 @@ class apiDio {
     }
   }
 
-  Future<List<dynamic>> getUserHealthRecords(
-    BuildContext context, {
-    int limit = 10,
-  }) async {
+  Future<List<dynamic>> getUserHealthRecords(BuildContext context, {int limit = 10}) async {
     try {
       // Get user ID from SharedPreferences
       await _initPrefs();
@@ -787,7 +849,11 @@ class apiDio {
       final response = await dio.get(
         '/health_records/$userId',
         queryParameters: {'limit': limit},
-        options: Options(headers: {'Authorization': 'Bearer $token'}),
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
       );
 
       if (response.statusCode == 200) {
@@ -803,7 +869,10 @@ class apiDio {
       }
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(errorMessage), backgroundColor: Colors.red),
+        SnackBar(
+          content: Text(errorMessage),
+          backgroundColor: Colors.red,
+        ),
       );
 
       throw Exception(errorMessage);
@@ -818,4 +887,5 @@ class apiDio {
       throw Exception(e.toString());
     }
   }
+
 }

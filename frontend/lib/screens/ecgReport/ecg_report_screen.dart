@@ -1,11 +1,12 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:healthy_heart/commonComponents/customAppBar.dart';
-import 'package:healthy_heart/screens/ecgReport/qaScreen.dart';
-import 'package:healthy_heart/services/apiDio.dart';
-import 'package:healthy_heart/utils/shared_prefs.dart';
+import 'package:MediSafe/commonComponents/customAppBar.dart';
+import 'package:MediSafe/screens/ecgReport/qaScreen.dart';
+import 'package:MediSafe/services/apiDio.dart';
+import 'package:MediSafe/utils/shared_prefs.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+
 
 class ECGReportScreen extends StatefulWidget {
   const ECGReportScreen({super.key});
@@ -50,24 +51,30 @@ class _ECGReportScreenState extends State<ECGReportScreen> {
           // Navigate to Q&A screen if questions are available
           if (result['questions_and_answers'] != null &&
               result['questions_and_answers'].isNotEmpty) {
+
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder:
-                    (context) => ECGQuestionsScreen(
-                      questionsAndAnswers: result['questions_and_answers'],
-                      healthScore:
-                          latestScores['health_score'], //result['health_score'].toString(),
-                      riskLevel:
-                          latestScores['risk_level'], //result['risk_level'],
-                      riskProbability:
-                          latestScores['risk_probability'], // result['risk_probability'],
-                    ),
+                builder: (context) => ECGQuestionsScreen(
+                  questionsAndAnswers: result['questions_and_answers'],
+                  healthScore: latestScores['health_score'], //result['health_score'].toString(),
+                  riskLevel: latestScores['risk_level'], //result['risk_level'],
+                  riskProbability: latestScores['risk_probability'], // result['risk_probability'],
+                ),
               ),
             );
           }
         } else {
           uploadStatus = 'Upload failed: ${result['message']}';
+          print(result);
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(result['message']),
+              backgroundColor: Colors.red,
+            ),
+          );
+
         }
         isLoading = false;
       });
@@ -114,7 +121,10 @@ class _ECGReportScreenState extends State<ECGReportScreen> {
             children: [
               const Text(
                 'Choose ECG Report Image',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               const SizedBox(height: 20),
               Row(
@@ -161,7 +171,11 @@ class _ECGReportScreenState extends State<ECGReportScreen> {
               color: Theme.of(context).primaryColor.withOpacity(0.1),
               borderRadius: BorderRadius.circular(20),
             ),
-            child: Icon(icon, size: 30, color: Theme.of(context).primaryColor),
+            child: Icon(
+              icon,
+              size: 30,
+              color: Theme.of(context).primaryColor,
+            ),
           ),
           const SizedBox(height: 8),
           Text(label),
@@ -198,7 +212,9 @@ class _ECGReportScreenState extends State<ECGReportScreen> {
                     const SizedBox(height: 8),
                     const Text(
                       'Please upload a clear image of your ECG report',
-                      style: TextStyle(color: Colors.grey),
+                      style: TextStyle(
+                        color: Colors.grey,
+                      ),
                     ),
                     const SizedBox(height: 16),
                     if (_imageFile != null) ...[
@@ -214,56 +230,56 @@ class _ECGReportScreenState extends State<ECGReportScreen> {
                       const SizedBox(height: 16),
                     ],
                     Center(
-                      child:
-                          _imageFile == null
-                              ? ElevatedButton.icon(
-                                onPressed: _showImagePickerOptions,
-                                icon: const Icon(Icons.add_photo_alternate),
-                                label: const Text('Select Image'),
-                                style: ElevatedButton.styleFrom(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 24,
-                                    vertical: 12,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                ),
-                              )
-                              : Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  ElevatedButton.icon(
-                                    onPressed: _showImagePickerOptions,
-                                    icon: const Icon(Icons.refresh),
-                                    label: const Text('Change Image'),
-                                    style: ElevatedButton.styleFrom(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 24,
-                                        vertical: 12,
-                                      ),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  ElevatedButton.icon(
-                                    onPressed: isLoading ? null : _uploadImage,
-                                    icon: const Icon(Icons.upload),
-                                    label: const Text('Upload'),
-                                    style: ElevatedButton.styleFrom(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 24,
-                                        vertical: 12,
-                                      ),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                      child: _imageFile == null
+                          ? ElevatedButton.icon(
+                        onPressed: _showImagePickerOptions,
+                        icon: const Icon(Icons.add_photo_alternate),
+                        label: const Text('Select Image'),
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 24,
+                            vertical: 12,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                      )
+                          : Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ElevatedButton.icon(
+                            onPressed: _showImagePickerOptions,
+                            icon: const Icon(Icons.refresh),
+                            label: const Text('Change Image'),
+                            style: ElevatedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 24,
+                                vertical: 12,
                               ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          ElevatedButton.icon(
+                            onPressed:
+                            isLoading ? null : _uploadImage,
+                            icon: const Icon(Icons.upload),
+                            label: const Text('Upload'),
+                            style: ElevatedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 24,
+                                vertical: 12,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                     if (uploadStatus != null) ...[
                       const SizedBox(height: 16),
@@ -271,12 +287,11 @@ class _ECGReportScreenState extends State<ECGReportScreen> {
                         child: Text(
                           uploadStatus!,
                           style: TextStyle(
-                            color:
-                                uploadStatus!.contains('successful')
-                                    ? Colors.green
-                                    : uploadStatus!.contains('failed')
-                                    ? Colors.red
-                                    : Colors.grey,
+                            color: uploadStatus!.contains('successful')
+                                ? Colors.green
+                                : uploadStatus!.contains('failed')
+                                ? Colors.red
+                                : Colors.grey,
                             fontWeight: FontWeight.bold,
                           ),
                         ),

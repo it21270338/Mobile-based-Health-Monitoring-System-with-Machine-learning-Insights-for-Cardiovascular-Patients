@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:healthy_heart/commonComponents/customAppBar.dart';
-import 'package:healthy_heart/screens/dashboard/health_records_screen.dart';
-import 'package:healthy_heart/screens/dashboard/health_score_timeline_screen.dart';
-import 'package:healthy_heart/screens/dashboard/health_tips_screen.dart';
-import 'package:healthy_heart/screens/dashboard/revalidate_screen.dart';
-import 'package:healthy_heart/screens/ecgReport/ecg_report_screen.dart';
-import 'package:healthy_heart/screens/humanAnatomy/pain_history_screen.dart';
-import 'package:healthy_heart/screens/humanAnatomy/pain_location_screen.dart';
-import 'package:healthy_heart/screens/userFeel/emotion_analytics.dart';
-import 'package:healthy_heart/screens/userFeel/feel.dart';
-import 'package:healthy_heart/services/apiDio.dart';
+import 'package:MediSafe/commonComponents/customAppBar.dart';
+import 'package:MediSafe/screens/dashboard/health_records_screen.dart';
+import 'package:MediSafe/screens/dashboard/health_score_timeline_screen.dart';
+import 'package:MediSafe/screens/dashboard/health_tips_screen.dart';
+import 'package:MediSafe/screens/dashboard/revalidate_screen.dart';
+import 'package:MediSafe/screens/ecgReport/ecg_report_screen.dart';
+import 'package:MediSafe/screens/emotion_upload_screen.dart';
+import 'package:MediSafe/screens/humanAnatomy/pain_history_screen.dart';
+import 'package:MediSafe/screens/humanAnatomy/pain_location_screen.dart';
+import 'package:MediSafe/screens/userFeel/emotion_analytics.dart';
+import 'package:MediSafe/screens/userFeel/feel.dart';
+import 'package:MediSafe/services/apiDio.dart';
 
 import '../../utils/shared_prefs.dart';
 import '../ecgReport/report_list_screen.dart';
@@ -22,6 +23,7 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
+
   final apiClient = apiDio();
   bool isLoading = true;
   Map<String, dynamic> latestScores = {
@@ -99,24 +101,24 @@ class _DashboardState extends State<Dashboard> {
                       isLoading
                           ? const Center(child: CircularProgressIndicator())
                           : Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              _buildScoreIndicator(
-                                "Health Score",
-                                "${latestScores['health_score']?.toStringAsFixed(1)}",
-                                Colors.green,
-                                Icons.favorite,
-                              ),
-                              _buildScoreIndicator(
-                                "Risk Level",
-                                "${latestScores['risk_probability']?.toStringAsFixed(1)}%",
-                                latestScores['risk_level'] == 'High'
-                                    ? Colors.red
-                                    : Colors.orange,
-                                Icons.warning_rounded,
-                              ),
-                            ],
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          _buildScoreIndicator(
+                            "Health Score",
+                            "${latestScores['health_score']?.toStringAsFixed(1)}",
+                            Colors.green,
+                            Icons.favorite,
                           ),
+                          _buildScoreIndicator(
+                            "Risk Level",
+                            "${latestScores['risk_probability']?.toStringAsFixed(1)}%",
+                            latestScores['risk_level'] == 'High'
+                                ? Colors.red
+                                : Colors.orange,
+                            Icons.warning_rounded,
+                          ),
+                        ],
+                      ),
                       const SizedBox(height: 20),
                       SizedBox(
                         width: double.infinity,
@@ -147,56 +149,59 @@ class _DashboardState extends State<Dashboard> {
               // Quick Actions Section
               const Text(
                 'Quick Actions',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               const SizedBox(height: 16),
               _buildActionButton(
                 "View Summary User Data",
                 Icons.person_outline,
                 Colors.blue,
-                HealthRecordsScreen(),
+                  HealthRecordsScreen(),
               ),
               const SizedBox(height: 12),
               _buildActionButton(
                 "Health Score Overtime",
                 Icons.timeline,
                 Colors.purple,
-                HealthScoreTimelineScreen(),
+                HealthScoreTimelineScreen()
               ),
               const SizedBox(height: 12),
               _buildActionButton(
                 "Health Tips",
                 Icons.lightbulb_outline,
                 Colors.orange,
-                HealthTipsScreen(),
+                HealthTipsScreen()
               ),
               const SizedBox(height: 12),
               _buildActionButton(
-                "ECG Report",
-                Icons.document_scanner_outlined,
-                Colors.red,
-                ECGReportScreen(),
+                  "ECG Report",
+                  Icons.document_scanner_outlined,
+                  Colors.red,
+                  ECGReportScreen()
               ),
               const SizedBox(height: 12),
               _buildActionButton(
-                "ECG Report Summary",
-                Icons.document_scanner_outlined,
-                Colors.red,
-                ReportListScreen(),
+                  "ECG Report Summary",
+                  Icons.document_scanner_outlined,
+                  Colors.red,
+                  ReportListScreen()
               ),
               const SizedBox(height: 12),
               _buildActionButton(
-                "Pain Localization",
-                Icons.personal_injury,
-                Colors.green,
-                PainLocationScreen(),
+                  "Pain Localization",
+                  Icons.personal_injury,
+                  Colors.green,
+                  PainLocationScreen(),
               ),
               const SizedBox(height: 12),
               _buildActionButton(
                 "Pain History",
                 Icons.personal_injury,
                 Colors.green,
-                PainHistoryScreen(),
+                PainHistoryScreen(riskLevel: '',),
               ),
               const SizedBox(height: 12),
               _buildActionButton(
@@ -212,6 +217,13 @@ class _DashboardState extends State<Dashboard> {
                 Colors.purpleAccent,
                 EmotionDashboardScreen(),
               ),
+              const SizedBox(height: 12),
+              // _buildActionButton(
+              //   "Test",
+              //   Icons.emoji_emotions_outlined,
+              //   Colors.purpleAccent,
+              //   EmotionUploadScreen(),
+              // ),
             ],
           ),
         ),
@@ -220,11 +232,7 @@ class _DashboardState extends State<Dashboard> {
   }
 
   Widget _buildScoreIndicator(
-    String label,
-    String value,
-    Color color,
-    IconData icon,
-  ) {
+      String label, String value, Color color, IconData icon) {
     return Column(
       children: [
         Container(
@@ -233,7 +241,11 @@ class _DashboardState extends State<Dashboard> {
             color: color.withOpacity(0.1),
             shape: BoxShape.circle,
           ),
-          child: Icon(icon, color: color, size: 32),
+          child: Icon(
+            icon,
+            color: color,
+            size: 32,
+          ),
         ),
         const SizedBox(height: 8),
         Text(
@@ -245,25 +257,30 @@ class _DashboardState extends State<Dashboard> {
           ),
         ),
         const SizedBox(height: 4),
-        Text(label, style: const TextStyle(fontSize: 14, color: Colors.grey)),
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 14,
+            color: Colors.grey,
+          ),
+        ),
       ],
     );
   }
 
-  Widget _buildActionButton(
-    String label,
-    IconData icon,
-    Color color,
-    Widget screen,
-  ) {
+  Widget _buildActionButton(String label, IconData icon, Color color,Widget screen) {
     return Card(
       elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
       child: ListTile(
         onTap: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => screen),
+            MaterialPageRoute(
+              builder: (context) => screen,
+            ),
           );
         },
         leading: Container(
@@ -272,9 +289,17 @@ class _DashboardState extends State<Dashboard> {
             color: color.withOpacity(0.1),
             borderRadius: BorderRadius.circular(8),
           ),
-          child: Icon(icon, color: color),
+          child: Icon(
+            icon,
+            color: color,
+          ),
         ),
-        title: Text(label, style: const TextStyle(fontWeight: FontWeight.w500)),
+        title: Text(
+          label,
+          style: const TextStyle(
+            fontWeight: FontWeight.w500,
+          ),
+        ),
         trailing: const Icon(Icons.arrow_forward_ios, size: 16),
       ),
     );
