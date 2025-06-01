@@ -30,7 +30,7 @@ MediSafe is designed to be simple and intuitive, making it easy for anyone to us
 
 # architectural diagram
 
-![architectural diagram drawio (1)](https://github.com/user-attachments/assets/01cf74dd-4ee6-49b7-b77b-ba8f3d83e456)
+![image](https://github.com/user-attachments/assets/bc8e2441-24e3-449e-bd3d-90e562f6a822)
 
 
 # Dependencies
